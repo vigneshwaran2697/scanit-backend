@@ -5,3 +5,9 @@ export class AppConstants {
     static CURRENT_TIMESTAMP = 'CURRENT_TIMESTAMP(6)';
 
 }
+
+export enum UserRoles {
+    SUPER_ADMIN = 'SuperAdmin',
+    ADMIN = 'Admin',
+    USER = 'User',
+  }

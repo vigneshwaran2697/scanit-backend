@@ -1,10 +1,10 @@
 import { registerAs } from '@nestjs/config';
 import devConfig from './dev.config';
 import { SsmService } from '../aws/ssm/ssm.service';
+import { DatabaseConfig } from './types/database.types';
 
 export default registerAs('typeOrmConfig', async () => {
-  // eslint-disable-next-line prefer-const
-  let data;
+  let data: DatabaseConfig;
   if (process.env.USE_LOCAL_DB === 'true') {
     data = devConfig();
   } else {
@@ -12,7 +12,6 @@ export default registerAs('typeOrmConfig', async () => {
   }
   const dbSync = process.env.DB_SYNC === 'true';
   return {
-    // eslint-disable-next-line @typescript-eslint/prefer-as-const
     type: 'postgres' as 'postgres',
     host: data.host,
     port: parseInt(data.port),

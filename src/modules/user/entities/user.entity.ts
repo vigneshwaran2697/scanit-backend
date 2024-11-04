@@ -3,10 +3,8 @@ import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 export enum UserRole {
     SUPER_ADMIN = 'SuperAdmin',
-    TPV_ADMIN = 'TPV Admin',
+    ADMIN = 'Admin',
     USER = 'User',
-    LIVE_AGENT = 'Live Agent',
-    VENDOR = 'Vendor',
   }
 
 @ObjectType()
@@ -35,4 +33,18 @@ export class User {
     @Field({ nullable: true })
     @Column({ nullable: true, name: 'u_phone_number' })
     phoneNumber?: string;
+
+    @Field({ nullable: true })
+    @Column({ nullable: true, name: 'u_user_role' })
+    userRole?: string;
+
+    @Field({ nullable: true })
+    @Column({ nullable: true, name: 'u_user_role' })
+    members?: string[];
+
+    @Field({ nullable: true })
+    @Column({ nullable: true, name: 'u_is_active' })
+    isActive?: boolean;
+
+
 }

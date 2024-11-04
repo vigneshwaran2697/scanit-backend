@@ -1,4 +1,4 @@
-import { UserRole } from '../../user/entities/user.entity';
+import { UserRole } from '../../modules/user/entities/user.entity';
 import * as AmazonCognitoIdentity from 'amazon-cognito-identity-js';
 import * as AWS from 'aws-sdk';
 import { config as configData } from '../../config/config';

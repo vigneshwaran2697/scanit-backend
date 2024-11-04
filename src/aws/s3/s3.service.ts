@@ -3,7 +3,6 @@ import { S3Object } from './entities/s3.entity';
 import { S3 } from 'aws-sdk';
 import { config as configData } from '../../config/config';
 import { parseUrl } from '@aws-sdk/url-parser';
-import { CognitoService } from '../cognito/cognito.service';
 
 const config = configData[process.env.NODE_ENV || 'development'];
 
