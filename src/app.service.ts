@@ -6,6 +6,6 @@ export class AppService implements OnApplicationBootstrap {
 
   constructor(private readonly userService: UserService) {}
   async onApplicationBootstrap() {
-    // await this.userService.createSuperAdminUser();
+    await this.userService.createSuperAdminUser();
   }
 }

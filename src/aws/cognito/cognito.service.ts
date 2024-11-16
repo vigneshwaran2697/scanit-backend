@@ -11,13 +11,11 @@ export class CognitoService {
   });
 
   public static userPool;
-  private readonly sns: AWS.SNS;
 
   constructor() {
     AWS.config.update({
       region: config.region,
     });
-    this.sns = new AWS.SNS();
   }
   public async performAuth(emailId: string, password: string): Promise<string> {
     const userObj = {
@@ -181,13 +179,13 @@ export class CognitoService {
     }
   }
 
-  public async addSqsQueue(sqsUserData) {
-    const sqs = new AWS.SQS({
-      apiVersion: '2012-11-05',
-      region: config.region,
-    });
-    return sqs.sendMessage(sqsUserData).promise();
-  }
+  // public async addSqsQueue(sqsUserData) {
+  //   const sqs = new AWS.SQS({
+  //     apiVersion: '2012-11-05',
+  //     region: config.region,
+  //   });
+  //   return sqs.sendMessage(sqsUserData).promise();
+  // }
 
   public async cognitoChangePassword(userName, oldPassword, newPassword) {
     const authenticationData = {
@@ -228,16 +226,5 @@ export class CognitoService {
         },
       });
     });
-  }
-
-  async sendSMS(
-    phoneNumber: string,
-    message: string,
-  ): Promise<AWS.SNS.PublishResponse> {
-    const params = {
-      Message: message,
-      PhoneNumber: phoneNumber,
-    };
-    return this.sns.publish(params).promise();
   }
 }
