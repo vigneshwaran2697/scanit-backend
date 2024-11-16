@@ -38,9 +38,9 @@ export class User {
     @Column({ nullable: true, name: 'u_user_role' })
     userRole?: string;
 
-    @Field({ nullable: true })
-    @Column({ nullable: true, name: 'u_user_role' })
-    members?: string[];
+    // @Field({ nullable: true })
+    // @Column({ nullable: true, name: 'u_user_role' })
+    // members?: string[];
 
     @Field({ nullable: true })
     @Column({ nullable: true, name: 'u_is_active' })

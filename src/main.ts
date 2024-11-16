@@ -14,7 +14,7 @@ async function bootstrap() {
     app.useGlobalInterceptors(new ResponseInterceptor());
     app.useGlobalPipes(new ValidationPipe({ forbidUnknownValues: false }));
     await app.listen(appPort);
-    Logger.log('TPV server started @ port number ' + appPort);
+    Logger.log('Scanit server started @ port number ' + appPort);
   } catch (e) {
     Logger.error(`❌  Error starting server, ${e}`, '', 'Bootstrap', false);
     process.exit();

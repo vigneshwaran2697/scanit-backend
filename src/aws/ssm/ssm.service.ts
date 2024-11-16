@@ -15,10 +15,6 @@ export class SsmService {
     return this.getParamFromAws(config.dbParamName);
   }
 
-  public static async getMailConfigFromAws() {
-    return this.getParamFromAws(config.mailParamName);
-  }
-
   public static async updateParams() {
     const data = await this.getParamFromAws(config.cognitoParamName);
     if (data) {
@@ -34,16 +30,6 @@ export class SsmService {
     if (mailData) {
       process.env.config = JSON.stringify(mailData);
       config['mailConfig'] = mailData;
-    }
-    const twilioData = await this.getParamFromAws(config.twilioParamName);
-    if (twilioData) {
-      process.env.config = JSON.stringify(twilioData);
-      config['twilioConfig'] = twilioData;
-    }
-    const ediData = await this.getParamFromAws(config.ediParamName);
-    if (ediData) {
-      process.env.config = JSON.stringify(ediData);
-      config['ediConfig'] = ediData;
     }
     const clientData = await this.getParamFromAws(config.clientParamName);
     if (clientData) {
@@ -66,6 +52,8 @@ export class SsmService {
         WithDecryption: true,
       })
       .promise();
+    console.log(data);
+    
     return JSON.parse(data.Parameter.Value);
   }
 }

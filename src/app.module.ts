@@ -17,11 +17,6 @@ import { UserService } from './modules/user/user.service';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({
-      envFilePath: '.env',
-      isGlobal: true,
-      load: [dbConfig],
-    }),
     GraphQLModule.forRoot<ApolloDriverConfig>({
       autoSchemaFile: './graphqlschema.gql',
       driver: ApolloDriver,
@@ -32,6 +27,11 @@ import { UserService } from './modules/user/user.service';
       buildSchemaOptions: {
         scalarsMap: [{ type: () => GraphQLDate, scalar: GraphQLDate }],
       },
+    }),
+    ConfigModule.forRoot({
+      envFilePath: '.env',
+      isGlobal: true,
+      load: [dbConfig],
     }),
     DatabaseModule,
     UserModule,
