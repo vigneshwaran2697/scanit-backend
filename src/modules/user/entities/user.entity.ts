@@ -39,12 +39,8 @@ export class User {
     @Column({ nullable: true, name: 'u_user_role' })
     userRole?: string;
 
-    // @Field({ nullable: true })
-    // @Column({ nullable: true, name: 'u_user_role' })
-    // members?: string[];
-
     @Field({ nullable: true })
-    @Column({ nullable: true, name: 'u_is_active' })
+    @Column({ nullable: true, name: 'u_is_active', default: true })
     isActive?: boolean;
 
     @Field({ nullable: false })
@@ -70,5 +66,4 @@ export class User {
       type: AppConstants.TIME_WITH_ZONE_TYPE,
     })
     public deletedAt?: Date;
-
 }

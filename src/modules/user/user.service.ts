@@ -82,11 +82,7 @@ export class UserService {
   }
 
   public async getUserByEmailId(emailId: string): Promise<User> {
-    const user = await this.userRepo
-      .createQueryBuilder('user')
-      .select('user')
-      .where('user.emailId = :emailId', { emailId })
-      .getOne();
+    const user = await this.userRepo.findByEmail(emailId);
     if (!user) {
       throw new UnauthenticatedException(`User not exist`);
     }
