@@ -29,16 +29,6 @@ export class SsmService {
         process.env.config = JSON.stringify(dbData);
         config['dbConfig'] = dbData;
       }
-      // const mailData = await this.getParamFromAws(config.mailParamName);
-      // if (mailData) {
-      //   process.env.config = JSON.stringify(mailData);
-      //   config['mailConfig'] = mailData;
-      // }
-      // const clientData = await this.getParamFromAws(config.clientParamName);
-      // if (clientData) {
-      //   process.env.config = JSON.stringify(clientData);
-      //   config['clientConfig'] = clientData;
-      // }
       console.log(
         `config region is ********************: ${config.region}`,
         SsmService.name,

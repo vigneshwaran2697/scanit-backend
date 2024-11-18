@@ -91,8 +91,7 @@ export class UserService {
 
   public async singIn(
     emailId: string,
-    password: string,
-    isTPVAdminSignIn = false,
+    password: string
   ): Promise<string> {
     await this.getUserByEmailId(emailId);
     return this.cognitoService.performAuth(emailId, password);

@@ -67,7 +67,7 @@ export class CognitoService {
     return data;
   }
 
-  public async getUserFromCognito(userName) {
+  public async getUserFromCognito(userName: string) {
     const params: any = {
       UserPoolId: config.appConfig.PoolId,
       Username: userName,
@@ -75,7 +75,7 @@ export class CognitoService {
     return CognitoService.cognitoIdentity.adminGetUser(params).promise();
   }
 
-  public async getUserFromCognitoByEmail(emailId) {
+  public async getUserFromCognitoByEmail(emailId: string) {
     const params: any = {
       UserPoolId: config.appConfig.PoolId,
       Username: emailId,
@@ -179,15 +179,7 @@ export class CognitoService {
     }
   }
 
-  // public async addSqsQueue(sqsUserData) {
-  //   const sqs = new AWS.SQS({
-  //     apiVersion: '2012-11-05',
-  //     region: config.region,
-  //   });
-  //   return sqs.sendMessage(sqsUserData).promise();
-  // }
-
-  public async cognitoChangePassword(userName, oldPassword, newPassword) {
+  public async cognitoChangePassword(userName: string, oldPassword: string, newPassword: string) {
     const authenticationData = {
       Username: userName,
       Password: oldPassword,
