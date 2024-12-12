@@ -1,8 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, OnApplicationBootstrap } from '@nestjs/common';
+import { UserService } from './modules/user/user.service';
 
 @Injectable()
-export class AppService {
-  getHello(): string {
-    return 'Hello World!';
+export class AppService implements OnApplicationBootstrap {
+
+  constructor(private readonly userService: UserService) {}
+  async onApplicationBootstrap() {
+    await this.userService.createSuperAdminUser();
   }
 }
