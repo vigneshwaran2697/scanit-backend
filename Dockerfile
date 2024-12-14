@@ -10,6 +10,8 @@ RUN npm install --silent \
   && npm i nodemon -g 
 # Copy the rest of the application code
 COPY . /opt/app
+
+RUN npm install --global rimraf
 #Build the application
 RUN npm run build
 # Expose the application port
