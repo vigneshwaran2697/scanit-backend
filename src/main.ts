@@ -11,7 +11,7 @@ async function bootstrap() {
     const app = await NestFactory.create<NestExpressApplication>(AppModule);
     app.enableCors();
     app.useGlobalFilters(new HttpExceptionFilter());
-    app.useGlobalInterceptors(new ResponseInterceptor());
+    // app.useGlobalInterceptors(new ResponseInterceptor());
     app.useGlobalPipes(new ValidationPipe({ forbidUnknownValues: false }));
     await app.listen(appPort);
     Logger.log('Scanit server started @ port number ' + appPort);
