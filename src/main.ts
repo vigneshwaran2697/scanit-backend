@@ -4,7 +4,7 @@ import { Logger, ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';
 import { HttpExceptionFilter } from './utils/filters/exception.handler';
 import { ResponseInterceptor } from './utils/middlewares/response-tap.interceptor';
-const appPort = process.env.PORT || 4000;
+const appPort = process.env.PORT || 3000;
 
 async function bootstrap() {
   try {
