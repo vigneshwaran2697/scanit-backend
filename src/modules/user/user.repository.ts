@@ -13,6 +13,6 @@ export class UserRepository extends BaseRepository<User> {
     return this.createQueryBuilder('user')
       .select('user')
       .where('user.emailId = :email', { email })
-      .getOneOrFail();
+      .getOne();
   }
 }
