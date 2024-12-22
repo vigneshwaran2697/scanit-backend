@@ -13,6 +13,7 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { GraphQLDate } from 'graphql-scalars';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { UserService } from './modules/user/user.service';
+import { SuperAdminModule } from './modules/super-admin/super-admin.module';
 
 
 @Module({
@@ -38,6 +39,7 @@ import { UserService } from './modules/user/user.service';
     CognitoModule,
     S3Module,
     AuthModule,
+    SuperAdminModule,
     SsmModule,
   ],
   controllers: [AppController],

@@ -14,9 +14,4 @@ export class UserResolver {
   ): Promise<string> {
     return this.userService.singIn(emailId, password);
   }
-
-  @Mutation(() => User)
-  async createSuperAdmin(@Args('createSuperAdminInput') createSuperAdminInput: CreateSuperAdminInput): Promise<User> {
-    return this.userService.createSuperAdmin(createSuperAdminInput);
-  }
 }

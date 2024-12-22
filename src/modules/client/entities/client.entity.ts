@@ -1,6 +1,7 @@
 import { Field } from '@nestjs/graphql';
+import { User } from 'src/modules/user/entities/user.entity';
 import { AppConstants } from 'src/utils/app-constants';
-import { Column, CreateDateColumn, DeleteDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { Column, CreateDateColumn, DeleteDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 
 @Entity({ name: 'client' })
 export class Client {
@@ -19,6 +20,38 @@ export class Client {
   @Field({ nullable: true })
   @Column({ nullable: true, name: 'c_is_active', default: true })
   isActive?: boolean;
+
+  @Field(() => [User])
+  @OneToMany(() => User, (user) => user.client)
+  users: User[];
+
+  @Field()
+  @Column({ name: 'c_address' })
+  Address: string;
+
+  @Field()
+  @Column({ name: 'c_city' })
+  city: string;
+
+  @Field()
+  @Column({ name: 'c_state' })
+  state: string;
+
+  @Field()
+  @Column({ name: 'c_country' })
+  country: string;
+
+  @Field()
+  @Column({ name: 'c_zipcode', nullable: true })
+  zipCode: number;
+
+  @Field()
+  @Column({ name: 'c_gst_document' })
+  gstDocument: string;
+
+  @Field()
+  @Column({ name: 'c_gst_number' })
+  gstNumber: string;
 
   @Field({ nullable: false })
   @CreateDateColumn({
