@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { GqlExecutionContext } from '@nestjs/graphql';
-import { User, UserRole } from '../../modules/user/entities/user.entity';
+import { User } from '../../modules/user/entities/user.entity';
 import { UserRoles } from '../../utils/app-constants';
 
 @Injectable()
@@ -27,12 +27,11 @@ export class RolesGuard implements CanActivate {
       return true;
     }
     const user: User = request.user;
-    const userRole =
-      user.userRole === UserRole.SUPER_ADMIN || user.userRole
+    const userRole = user.userRole
 
     console.log('userRole is ' + userRole);
     console.log('Roles Allowed ' + roles);
-    const hasRole = (role) => {
+    const hasRole = (role:any) => {
       return roles.some((x) => role.indexOf(x) >= 0);
     };
     if (!(userRole && hasRole(userRole))) {

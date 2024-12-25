@@ -2,6 +2,48 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type Client {
+  Address: String!
+  city: String!
+  clientId: String!
+  clientName: String
+  country: String!
+  createdAt: DateTime!
+  deletedAt: DateTime
+  gstDocument: String!
+  gstNumber: String!
+  isActive: Boolean
+  isApproved: Boolean
+  state: String!
+  updatedAt: DateTime
+  userLimit: Float
+  users: [User!]!
+  zipCode: Float!
+}
+
+input ClientContactInputs {
+  designation: String!
+  emailId: String!
+  isPrimary: Boolean!
+  name: String!
+  order: Float!
+  phoneNumber: String!
+}
+
+input CreateClientInput {
+  Address: String!
+  city: String!
+  clientContactInputs: [ClientContactInputs!]!
+  clientName: String!
+  country: String!
+  gstDocument: String!
+  gstNumber: String!
+  isActive: Boolean!
+  state: String!
+  userLimit: Float!
+  zipCode: Float!
+}
+
 input CreateSuperAdminInput {
   emailId: String!
   firstName: String!
@@ -20,10 +62,14 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 scalar DateTime
 
 type Mutation {
+  createClient(createClientInput: CreateClientInput!): Client!
   createSuperAdmin(createSuperAdminInput: CreateSuperAdminInput!): User!
+  update(updateClientInput: UpdateClientInput!): Client!
 }
 
 type Query {
+  getAllclients(limit: Float, offset: Float, search: String): [Client!]!
+  getClient(id: String!): Client!
   getSignedUrlForDownload(bucketName: String!, key: String!): S3Object!
   getSignedUrlForUpload(bucketName: String!, key: String!): S3Object!
   s3FileDelete(bucketName: String!, key: String!): String!
@@ -34,14 +80,25 @@ type S3Object {
   preSignedUrl: String!
 }
 
+input UpdateClientInput {
+  clientId: String!
+  isActive: Boolean!
+  isApproved: Boolean
+}
+
 type User {
+  client: Client
+  clientId: String
   createdAt: DateTime!
   deletedAt: DateTime
+  designation: String
   emailId: String!
   firstName: String
   id: String!
   isActive: Boolean
+  isPrimary: Boolean
   lastName: String
+  order: Float
   phoneNumber: String
   updatedAt: DateTime
   userRole: String

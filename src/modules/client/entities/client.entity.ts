@@ -1,9 +1,10 @@
-import { Field } from '@nestjs/graphql';
+import { Field, ObjectType } from '@nestjs/graphql';
 import { User } from 'src/modules/user/entities/user.entity';
 import { AppConstants } from 'src/utils/app-constants';
 import { Column, CreateDateColumn, DeleteDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 
 @Entity({ name: 'client' })
+@ObjectType()
 export class Client {
   @Field()
   @PrimaryGeneratedColumn('uuid', { name: 'c_id' })
@@ -20,6 +21,10 @@ export class Client {
   @Field({ nullable: true })
   @Column({ nullable: true, name: 'c_is_active', default: true })
   isActive?: boolean;
+
+  @Field({ nullable: true })
+  @Column({ nullable: true, name: 'c_is_approved', default: false })
+  isApproved?: boolean;
 
   @Field(() => [User])
   @OneToMany(() => User, (user) => user.client)

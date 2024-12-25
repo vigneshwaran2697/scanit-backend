@@ -7,41 +7,46 @@ import { UserRoles } from 'src/utils/app-constants';
 import { UseGuards } from '@nestjs/common';
 import { CognitoAuthGuard } from 'src/auth/guards/cognito.guard';
 import { RolesGuard } from 'src/auth/guards/role-auth.guard';
+import { Client } from './entities/client.entity';
 
-@Resolver('Client')
+@Resolver(() => Client)
 export class ClientResolver {
   constructor(private readonly clientService: ClientService) {}
 
-  @Mutation('createClient')
-  create(@Args('createClientInput') createClientInput: CreateClientInput) {
-    return this.clientService.create(createClientInput);
+  @Mutation(() => Client)
+  async createClient(@Args('createClientInput') createClientInput: CreateClientInput): Promise<Client> {
+    return this.clientService.createClient(createClientInput);
   }
 
   @UseGuards(CognitoAuthGuard, RolesGuard)
-  @Roles(UserRoles.ADMIN)
-  @Query('client')
-  findAll() {
-    return this.clientService.findAll();
+  @Roles(UserRoles.SUPER_ADMIN)
+  @Query(() => [Client], { name: 'getAllclients' })
+  async findAll(
+    @Args('search', { type: () => String, nullable: true }) search: string,
+    @Args('offset', { type: () => Number, nullable: true }) offset: number,
+    @Args('limit', { type: () => Number, nullable: true }) limit: number,
+  ) {
+    return this.clientService.getAllClients(search, offset, limit);
   }
 
   @UseGuards(CognitoAuthGuard, RolesGuard)
-  @Roles(UserRoles.ADMIN)
-  @Query('client')
-  findOne(@Args('id') id: number) {
-    return this.clientService.findOne(id);
+  @Roles(UserRoles.SUPER_ADMIN)
+  @Query(() => Client, { name: 'getClient' })
+  async findOne(@Args('id') id: string) {
+    return this.clientService.getClientById(id);
   }
 
   @UseGuards(CognitoAuthGuard, RolesGuard)
-  @Roles(UserRoles.ADMIN)
-  @Mutation('updateClient')
-  update(@Args('updateClientInput') updateClientInput: UpdateClientInput) {
-    return this.clientService.update(updateClientInput.id, updateClientInput);
+  @Roles(UserRoles.SUPER_ADMIN)
+  @Mutation(() => Client)
+  update(@Args('updateClientInput') updateClientInput: UpdateClientInput): Promise<string> {
+    return this.clientService.updateClient(updateClientInput.clientId, updateClientInput);
   }
 
-  @UseGuards(CognitoAuthGuard, RolesGuard)
-  @Roles(UserRoles.ADMIN)
-  @Mutation('removeClient')
-  remove(@Args('id') id: number) {
-    return this.clientService.remove(id);
-  }
+  // @UseGuards(CognitoAuthGuard, RolesGuard)
+  // @Roles(UserRoles.ADMIN)
+  // @Mutation('removeClient')
+  // remove(@Args('id') id: number) {
+  //   return this.clientService.remove(id);
+  // }
 }

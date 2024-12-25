@@ -14,6 +14,7 @@ import { GraphQLDate } from 'graphql-scalars';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { UserService } from './modules/user/user.service';
 import { SuperAdminModule } from './modules/super-admin/super-admin.module';
+import { ClientModule } from './modules/client/client.module';
 
 
 @Module({
@@ -41,6 +42,7 @@ import { SuperAdminModule } from './modules/super-admin/super-admin.module';
     AuthModule,
     SuperAdminModule,
     SsmModule,
+    ClientModule,
   ],
   controllers: [AppController],
   providers: [AppService, UserService],

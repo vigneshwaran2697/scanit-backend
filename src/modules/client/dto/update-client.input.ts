@@ -1,6 +1,13 @@
-import { CreateClientInput } from './create-client.input';
-import { PartialType } from '@nestjs/mapped-types';
+import { Field, InputType } from '@nestjs/graphql';
 
-export class UpdateClientInput extends PartialType(CreateClientInput) {
-  id: number;
+@InputType()
+export class UpdateClientInput {
+  @Field()
+  clientId: string;
+
+  @Field({ nullable: true })
+  isApproved: boolean;
+
+  @Field()
+  isActive: boolean;
 }
