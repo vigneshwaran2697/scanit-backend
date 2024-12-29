@@ -1,53 +1,97 @@
-import { BaseRepository } from "src/database/base.respoitory";
-import { Client } from "./entities/client.entity";
-import { DataSource } from "typeorm";
-import { Injectable } from "@nestjs/common";
-import { CreateClientInput } from "./dto/create-client.input";
-import { UserRepository } from "../user/user.repository";
+import { BaseRepository } from 'src/database/base.respoitory';
+import { Client } from './entities/client.entity';
+import { DataSource } from 'typeorm';
+import { Injectable } from '@nestjs/common';
+import { CreateClientInput } from './dto/create-client.input';
+import { UserRepository } from '../user/user.repository';
 import { Transactional } from 'typeorm-transactional';
-import { UserRole } from "../user/entities/user.entity";
+import { UserRole } from '../user/entities/user.entity';
+import { CognitoService } from 'src/aws/cognito/cognito.service';
 
 @Injectable()
 export class ClientRepository extends BaseRepository<Client> {
-    constructor(
-        private readonly dataSource: DataSource,
-        private readonly userRepo: UserRepository){
-        super(Client, dataSource.createEntityManager());
-    }
+  constructor(
+    private readonly dataSource: DataSource,
+    private readonly userRepo: UserRepository,
+    private readonly cognitoService: CognitoService,
+  ) {
+    super(Client, dataSource.createEntityManager());
+  }
 
-    @Transactional()
-    public async createClient(createClientInput: CreateClientInput): Promise<Client> {
-        const client = await this.save({
-            clientName: createClientInput.clientName,
-            userLimit: createClientInput.userLimit,
-            isActive: createClientInput.isActive,
-            Address: createClientInput.Address,
-            city: createClientInput.city,
-            zipCode: createClientInput.zipCode,
-            gstDocument: createClientInput.gstDocument,
-            gstNumber: createClientInput.gstNumber,
-            state: createClientInput.state,
-            country: createClientInput.country,
-        })
+  getDecryptedPassword(password: string): string {
+    // Todo decrypt using crypto-js AES
+    return password;
+  }
 
-        console.log(client);
-        for (const clientUser of createClientInput.clientContactInputs){
-            if (clientUser.isPrimary){
-                //Todo create a client primary user
-            }
-            const user = await this.userRepo.save({
-                emailId: clientUser.emailId,
-                phoneNumber: clientUser.phoneNumber,
-                designation: clientUser.designation,
-                firstName: clientUser.name,
-                order: clientUser.order,
-                isPrimary: clientUser.isPrimary,
-                clientId: client.clientId,
-                userRole: UserRole.ADMIN
-            })
-            console.log(user);
-            
+  @Transactional()
+  public async createClient(
+    createClientInput: CreateClientInput,
+  ): Promise<Client> {
+      try {
+        const isExistingClient = await this.userRepo.findByEmail(
+          createClientInput?.clientEmailId,
+        );
+        if (isExistingClient) {
+          throw new Error('Client Email already exists');
         }
-        return client;
+        const client = await this.save({
+          clientName: createClientInput.clientName,
+          clientEmailId: createClientInput.clientEmailId,
+          userLimit: createClientInput.userLimit,
+          isActive: createClientInput.isActive,
+          Address: createClientInput.Address,
+          city: createClientInput.city,
+          zipCode: createClientInput.zipCode,
+          gstDocument: createClientInput.gstDocument,
+          gstNumber: createClientInput.gstNumber,
+          state: createClientInput.state,
+          country: createClientInput.country,
+        });
+      const password = this.getDecryptedPassword(
+        createClientInput.passwordHash,
+      );
+      //Client cognito creation
+      const cognitoResp = await this.cognitoService.createUserInCognito({
+        emailId: createClientInput.clientEmailId,
+        password: password,
+        userAttributes: [
+          { Name: 'email', Value: createClientInput.clientEmailId },
+          {
+            Name: 'name',
+            Value: `${createClientInput.clientName}`,
+          },
+          { Name: 'custom:firstname', Value: createClientInput.clientName },
+          { Name: 'custom:lastname', Value: '' },
+        ],
+      });
+      const username = cognitoResp?.UserSub;
+      await this.userRepo.save({
+        emailId: createClientInput.clientEmailId,
+        username: username,
+        firstName: createClientInput.clientName,
+        lastname: '',
+        phoneNumber: createClientInput.clientPhone,
+        order: 0,
+        isPrimary: true,
+        clientId: client.clientId,
+        userRole: UserRole.ADMIN,
+      });
+      //Client user creation
+      for (const clientUser of createClientInput.clientContactInputs) {
+        await this.userRepo.save({
+          emailId: clientUser.emailId,
+          phoneNumber: clientUser.phoneNumber,
+          designation: clientUser.designation,
+          firstName: clientUser.name,
+          order: clientUser.order,
+          isPrimary: false,
+          clientId: client.clientId,
+          userRole: UserRole.ADMIN,
+        });
+      }
+      return client;
+    } catch (e) {
+      console.log(`Error creating client in cognito: ${e}`);
     }
+  }
 }

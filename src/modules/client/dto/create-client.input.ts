@@ -16,15 +16,21 @@ export class ClientContactInputs {
 
   @Field()
   order: number;
-
-  @Field()
-  isPrimary: boolean;
 }
 
 @InputType()
 export class CreateClientInput {
   @Field()
   clientName: string;
+
+  @Field()
+  clientEmailId: string;
+
+  @Field()
+  clientPhone: string;
+
+  @Field()
+  passwordHash: string;
 
   @Field(() => [ClientContactInputs])
   clientContactInputs: ClientContactInputs[];

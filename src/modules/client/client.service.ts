@@ -4,16 +4,16 @@ import { UpdateClientInput } from './dto/update-client.input';
 import { ClientRepository } from './client.repository';
 import { Client } from './entities/client.entity';
 
+
 @Injectable()
 export class ClientService {
   constructor(private readonly clientRepo: ClientRepository) {}
   async createClient(createClientInput: CreateClientInput): Promise<Client> {
-    console.log(createClientInput);
     return this.clientRepo.createClient(createClientInput);
   }
 
   async getAllClients(
-    search: string,
+    search: string, 
     offset: number,
     limit: number,
   ): Promise<Client[]> {

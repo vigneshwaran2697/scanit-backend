@@ -5,6 +5,7 @@
 type Client {
   Address: String!
   city: String!
+  clientEmailId: String
   clientId: String!
   clientName: String
   country: String!
@@ -24,7 +25,6 @@ type Client {
 input ClientContactInputs {
   designation: String!
   emailId: String!
-  isPrimary: Boolean!
   name: String!
   order: Float!
   phoneNumber: String!
@@ -34,11 +34,14 @@ input CreateClientInput {
   Address: String!
   city: String!
   clientContactInputs: [ClientContactInputs!]!
+  clientEmailId: String!
   clientName: String!
+  clientPhone: String!
   country: String!
   gstDocument: String!
   gstNumber: String!
   isActive: Boolean!
+  passwordHash: String!
   state: String!
   userLimit: Float!
   zipCode: Float!
@@ -64,7 +67,7 @@ scalar DateTime
 type Mutation {
   createClient(createClientInput: CreateClientInput!): Client!
   createSuperAdmin(createSuperAdminInput: CreateSuperAdminInput!): User!
-  update(updateClientInput: UpdateClientInput!): Client!
+  update(updateClientInput: UpdateClientInput!): String!
 }
 
 type Query {
@@ -73,6 +76,7 @@ type Query {
   getSignedUrlForDownload(bucketName: String!, key: String!): S3Object!
   getSignedUrlForUpload(bucketName: String!, key: String!): S3Object!
   s3FileDelete(bucketName: String!, key: String!): String!
+  sendEmail: String!
   signIn(emailId: String!, password: String!): String
 }
 

@@ -38,7 +38,7 @@ export class ClientResolver {
 
   @UseGuards(CognitoAuthGuard, RolesGuard)
   @Roles(UserRoles.SUPER_ADMIN)
-  @Mutation(() => Client)
+  @Mutation(() => String)
   update(@Args('updateClientInput') updateClientInput: UpdateClientInput): Promise<string> {
     return this.clientService.updateClient(updateClientInput.clientId, updateClientInput);
   }

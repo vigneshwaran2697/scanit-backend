@@ -15,6 +15,10 @@ export class Client {
   clientName: string;
 
   @Field({ nullable: true })
+  @Column({ name: 'c_email_id' })
+  clientEmailId: string;
+
+  @Field({ nullable: true })
   @Column({ name: 'c_user_limit', type: 'int', default: 0 })
   userLimit: number;
 

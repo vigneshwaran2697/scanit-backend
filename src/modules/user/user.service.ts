@@ -5,6 +5,8 @@ import { CognitoService } from '../../aws/cognito/cognito.service';
 import { UserRepository } from './user.repository';
 import { UnauthenticatedException } from '../../utils/exceptions/unauthenticated.exception';
 const config = configData[process.env.NODE_ENV || 'development'];
+import { Resend } from 'resend';
+import { AES } from 'crypto-js';
 
 // SuperAdmin user
 const SUPERADMIN_FIRST_NAME = 'ScanIt';
@@ -46,7 +48,6 @@ export class UserService {
             await this.cognitoService.getUserFromCognito(adminEmailId);
           username = cognitoResp.Username;
           console.log(username);
-          
         } catch (err) {
           console.log('Cognito Super Admin User Fetch Error: ', err);
         }
@@ -91,12 +92,31 @@ export class UserService {
     return user;
   }
 
-  public async singIn(
-    emailId: string,
-    password: string
-  ): Promise<string> {
+  public async singIn(emailId: string, password: string): Promise<string> {
     await this.getUserByEmailId(emailId);
     return this.cognitoService.performAuth(emailId, password);
   }
 
+  public async sendEmail() {
+    const resend = new Resend('re_35v4kocS_HBM7zyUh2GqAjYJn2Y7eh5ot');
+
+    // Encryption
+    let encryptedData = AES.encrypt('this is message', 'gDdoxYdfT5XCJw0y');
+
+    // Decryption
+    let decryptedData = AES.decrypt(encryptedData, 'gDdoxYdfT5XCJw0y');
+    console.log(decryptedData.toString());
+
+      const { data, error } = await resend.emails.send({
+        from: 'scanit <noreply@scanit.com>',
+        to: ['vicky.ravi26@gmail.com'],
+        subject: 'Test Email',
+        html: '<strong>It works!</strong>',
+      });
+      if (error) {
+        throw new Error(JSON.stringify(error));
+      }
+      console.log({ data });
+      return JSON.stringify(data);
+  }
 }
