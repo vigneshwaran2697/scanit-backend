@@ -2,6 +2,7 @@ import { Field, ObjectType } from '@nestjs/graphql';
 import { User } from 'src/modules/user/entities/user.entity';
 import { AppConstants } from 'src/utils/app-constants';
 import { Column, CreateDateColumn, DeleteDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { Members } from '../client-members/entity/client-members.entity';
 
 @Entity({ name: 'client' })
 @ObjectType()
@@ -33,6 +34,10 @@ export class Client {
   @Field(() => [User])
   @OneToMany(() => User, (user) => user.client)
   users: User[];
+
+  @Field(() => [Members])
+  @OneToMany(() => Members, (members) => members.client)
+  members: Members[];
 
   @Field()
   @Column({ name: 'c_address' })

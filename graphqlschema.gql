@@ -15,6 +15,7 @@ type Client {
   gstNumber: String!
   isActive: Boolean
   isApproved: Boolean
+  members: [Members!]!
   state: String!
   updatedAt: DateTime
   userLimit: Float
@@ -47,6 +48,24 @@ input CreateClientInput {
   zipCode: Float!
 }
 
+input CreateMemberInput {
+  aadhaarCard: String!
+  dateOfJoining: String!
+  designation: String!
+  dob: String!
+  emailId: String!
+  employeeId: String!
+  expiryDate: String!
+  fullName: String!
+  gender: String!
+  idIssueDate: String!
+  permanentAddress: String!
+  phoneNumber: String!
+  photograph: String!
+  presentAddress: String!
+  sonOf: String!
+}
+
 input CreateSuperAdminInput {
   emailId: String!
   firstName: String!
@@ -64,17 +83,46 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
+type Members {
+  aadhaarCard: String!
+  client: Client
+  clientId: String
+  createdAt: DateTime!
+  dateOfJoining: String!
+  deletedAt: DateTime
+  designation: String!
+  dob: String!
+  emailId: String!
+  employeeId: String!
+  expiryDate: String!
+  fullName: String!
+  gender: String!
+  id: String!
+  idIssueDate: String!
+  isActive: Boolean!
+  permanentAddress: String!
+  phoneNumber: String!
+  photograph: String!
+  presentAddress: String!
+  sonOf: String!
+  updatedAt: DateTime
+}
+
 type Mutation {
   createClient(createClientInput: CreateClientInput!): Client!
   createSuperAdmin(createSuperAdminInput: CreateSuperAdminInput!): User!
-  update(updateClientInput: UpdateClientInput!): String!
+  createUser(createMemberInput: CreateMemberInput!): String!
+  updateClient(updateClientInput: UpdateClientInput!): String!
+  updateUser(updateMemberInput: UpdateMemberInput!): String!
 }
 
 type Query {
+  getAllUsers(limit: Float!, offset: Float!, search: String!): [Members!]!
   getAllclients(limit: Float, offset: Float, search: String): [Client!]!
   getClient(id: String!): Client!
   getSignedUrlForDownload(bucketName: String!, key: String!): S3Object!
   getSignedUrlForUpload(bucketName: String!, key: String!): S3Object!
+  getUserById(memberId: String!): Members!
   s3FileDelete(bucketName: String!, key: String!): String!
   sendEmail: String!
   signIn(emailId: String!, password: String!): String
@@ -88,6 +136,26 @@ input UpdateClientInput {
   clientId: String!
   isActive: Boolean!
   isApproved: Boolean
+}
+
+input UpdateMemberInput {
+  aadhaarCard: String
+  dateOfJoining: String
+  designation: String
+  dob: String
+  emailId: String
+  employeeId: String
+  expiryDate: String
+  fullName: String
+  gender: String
+  id: String!
+  idIssueDate: String
+  isActive: Boolean
+  permanentAddress: String
+  phoneNumber: String
+  photograph: String
+  presentAddress: String
+  sonOf: String
 }
 
 type User {
