@@ -15,8 +15,8 @@ export class UserResolver {
     return this.userService.singIn(emailId, password);
   }
 
-  @Query(() => String, { name: 'sendEmail' })
-  public async sendEmail(): Promise<string | void> {
-    return this.userService.sendEmail();
-  }
+  // @Query(() => String, { name: 'sendEmail' })
+  // public async sendEmail(): Promise<string | void> {
+  //   return this.userService.sendEmail();
+  // }
 }

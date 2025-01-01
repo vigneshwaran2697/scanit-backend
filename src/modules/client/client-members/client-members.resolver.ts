@@ -52,9 +52,8 @@ export class ClientMembersResolver {
   @Roles(UserRoles.ADMIN)
   @Mutation(() => String, { name: 'updateUser' })
   public async updateMember(
-    @Args('updateMemberInput') updateMemberInput: UpdateMemberInput,
-    @CurrentUser() user: User,
+    @Args('updateMemberInput') updateMemberInput: UpdateMemberInput
   ): Promise<String>{
-    return this.clientMembersService.updateMember(updateMemberInput, user);
+    return this.clientMembersService.updateMember(updateMemberInput);
   }
 }

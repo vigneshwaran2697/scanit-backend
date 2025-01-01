@@ -7,7 +7,7 @@ import { UserRepository } from '../user/user.repository';
 import { Transactional } from 'typeorm-transactional';
 import { UserRole } from '../user/entities/user.entity';
 import { CognitoService } from 'src/aws/cognito/cognito.service';
-
+import { AES, enc } from 'crypto-js';
 @Injectable()
 export class ClientRepository extends BaseRepository<Client> {
   constructor(
@@ -19,8 +19,11 @@ export class ClientRepository extends BaseRepository<Client> {
   }
 
   getDecryptedPassword(password: string): string {
-    // Todo decrypt using crypto-js AES
-    return password;
+    if (password && password.length) {
+      let decryptedData = AES.decrypt(password, 'gDdoxYdfT5XCJw0y');
+      // console.log(decryptedData.toString(enc.Utf8));
+      return decryptedData.toString(enc.Utf8);
+    }
   }
 
   @Transactional()

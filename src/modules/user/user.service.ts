@@ -6,7 +6,7 @@ import { UserRepository } from './user.repository';
 import { UnauthenticatedException } from '../../utils/exceptions/unauthenticated.exception';
 const config = configData[process.env.NODE_ENV || 'development'];
 import { Resend } from 'resend';
-import { AES } from 'crypto-js';
+import { AES, enc } from 'crypto-js';
 
 // SuperAdmin user
 const SUPERADMIN_FIRST_NAME = 'ScanIt';
@@ -102,10 +102,11 @@ export class UserService {
 
     // Encryption
     let encryptedData = AES.encrypt('this is message', 'gDdoxYdfT5XCJw0y');
+    // encodeURIComponent(encryptedData.toString());
 
     // Decryption
     let decryptedData = AES.decrypt(encryptedData, 'gDdoxYdfT5XCJw0y');
-    console.log(decryptedData.toString());
+    console.log(decryptedData.toString(enc.Utf8));
 
       const { data, error } = await resend.emails.send({
         from: 'scanit <noreply@scanit.com>',

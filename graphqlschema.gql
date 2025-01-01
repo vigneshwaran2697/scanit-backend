@@ -124,7 +124,6 @@ type Query {
   getSignedUrlForUpload(bucketName: String!, key: String!): S3Object!
   getUserById(memberId: String!): Members!
   s3FileDelete(bucketName: String!, key: String!): String!
-  sendEmail: String!
   signIn(emailId: String!, password: String!): String
 }
 

@@ -42,7 +42,10 @@ export class ClientMembersService {
         return member;
     }
 
-    async updateMember(updateMemberInput: UpdateMemberInput, user: User): Promise<string> {
+    async updateMember(updateMemberInput: UpdateMemberInput): Promise<string> {
+        if (!updateMemberInput.id) {
+            throw new Error('User id is required');
+        }
         const id = updateMemberInput.id;
         delete updateMemberInput.id;
         if (updateMemberInput.isActive === undefined || updateMemberInput.isActive === null) {
