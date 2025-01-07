@@ -56,7 +56,7 @@ export class ClientRepository extends BaseRepository<Client> {
       //Client cognito creation
       const cognitoResp = await this.cognitoService.createUserInCognito({
         emailId: createClientInput.clientEmailId,
-        password: password,
+        password: createClientInput.passwordHash,
         userAttributes: [
           { Name: 'email', Value: createClientInput.clientEmailId },
           {
