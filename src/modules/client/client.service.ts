@@ -17,7 +17,8 @@ export class ClientService {
     offset: number,
     limit: number,
   ): Promise<Client[]> {
-    const queryBuilder = this.clientRepo.createQueryBuilder('client');
+    const queryBuilder = this.clientRepo.createQueryBuilder('client')
+          .leftJoinAndSelect('client.users', 'clientUsers');
     if (search) {
       queryBuilder.where('client.clientName like :search', {
         search: `%${search}%`,
