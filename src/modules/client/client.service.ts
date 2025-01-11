@@ -24,6 +24,7 @@ export class ClientService {
         search: `%${search}%`,
       });
     }
+    queryBuilder.orderBy('client.updatedAt', 'DESC');
     if (offset) {
       queryBuilder.offset(offset);
     }

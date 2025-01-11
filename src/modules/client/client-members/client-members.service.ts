@@ -22,6 +22,7 @@ export class ClientMembersService {
         if (search) {
             members.where('members.fullName LIKE :search', { search: `%${search}%` });
         }
+        members.orderBy('members.updatedAt', 'DESC');
         if (limit) {
             members.limit(limit);
         }
