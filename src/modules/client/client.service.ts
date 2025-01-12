@@ -18,9 +18,10 @@ export class ClientService {
     limit: number,
   ): Promise<Client[]> {
     const queryBuilder = this.clientRepo.createQueryBuilder('client')
-          .leftJoinAndSelect('client.users', 'clientUsers');
+          .leftJoinAndSelect('client.users', 'clientUsers')
+          .where('client.isApproved = :isApproved', { isApproved: 'APPROVED' });
     if (search) {
-      queryBuilder.where('client.clientName like :search', {
+      queryBuilder.andWhere('client.clientName like :search', {
         search: `%${search}%`,
       });
     }
@@ -58,5 +59,28 @@ export class ClientService {
       throw new Error('Client not found');
     }
     return 'Client updated successfully';
+  }
+
+  async getClientApprovalList(
+    search: string, 
+    offset: number,
+    limit: number,
+  ): Promise<Client[]> {
+    const queryBuilder = this.clientRepo.createQueryBuilder('client')
+          .leftJoinAndSelect('client.users', 'clientUsers')
+          .where('client.isApproved IN (:...isApproved)', { isApproved: ['PENDING', 'REJECTED'] });
+    if (search) {
+      queryBuilder.andWhere('client.clientName like :search', {
+        search: `%${search}%`,
+      });
+    }
+    queryBuilder.orderBy('client.updatedAt', 'DESC');
+    if (offset) {
+      queryBuilder.offset(offset);
+    }
+    if (limit) {
+      queryBuilder.limit(limit);
+    }
+    return queryBuilder.getMany();
   }
 }

@@ -1,4 +1,5 @@
 import { Field, InputType } from '@nestjs/graphql';
+import { ApprovalStatus } from '../entities/client.entity';
 
 @InputType()
 export class UpdateClientInput {
@@ -6,7 +7,7 @@ export class UpdateClientInput {
   clientId: string;
 
   @Field({ nullable: true })
-  isApproved: boolean;
+  isApproved: ApprovalStatus;
 
   @Field()
   isActive: boolean;

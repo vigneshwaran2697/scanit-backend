@@ -1,8 +1,16 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 import { User } from 'src/modules/user/entities/user.entity';
 import { AppConstants } from 'src/utils/app-constants';
 import { Column, CreateDateColumn, DeleteDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 import { Members } from '../client-members/entity/client-members.entity';
+
+export enum ApprovalStatus {
+  APPROVED = 'APPROVED',
+  PENDING = 'PENDING',
+  REJECTED = 'REJECTED',
+}
+
+registerEnumType(ApprovalStatus, { name: 'ApprovalStatus' });
 
 @Entity({ name: 'client' })
 @ObjectType()
@@ -27,9 +35,9 @@ export class Client {
   @Column({ nullable: true, name: 'c_is_active', default: true })
   isActive?: boolean;
 
-  @Field({ nullable: true })
-  @Column({ nullable: true, name: 'c_is_approved', default: false })
-  isApproved?: boolean;
+  @Field(() => ApprovalStatus, { nullable: true })
+  @Column({ nullable: true, name: 'c_is_approved', type: 'enum', enum: ApprovalStatus, default: ApprovalStatus.PENDING })
+  isApproved?: ApprovalStatus;
 
   @Field(() => [User])
   @OneToMany(() => User, (user) => user.client)

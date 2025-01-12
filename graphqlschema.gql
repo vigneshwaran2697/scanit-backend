@@ -2,6 +2,12 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+enum ApprovalStatus {
+  APPROVED
+  PENDING
+  REJECTED
+}
+
 type Client {
   Address: String!
   city: String!
@@ -14,7 +20,7 @@ type Client {
   gstDocument: String!
   gstNumber: String!
   isActive: Boolean
-  isApproved: Boolean
+  isApproved: ApprovalStatus
   members: [Members!]!
   state: String!
   updatedAt: DateTime
@@ -120,6 +126,7 @@ type Query {
   getAllUsers(limit: Float!, offset: Float!, search: String!): [Members!]!
   getAllclients(limit: Float, offset: Float, search: String): [Client!]!
   getClient(id: String!): Client!
+  getClientApprovalList(limit: Float, offset: Float, search: String): [Client!]!
   getSignedUrlForDownload(bucketName: String!, key: String!): S3Object!
   getSignedUrlForUpload(bucketName: String!, key: String!): S3Object!
   getUserById(memberId: String!): Members!
@@ -134,7 +141,7 @@ type S3Object {
 input UpdateClientInput {
   clientId: String!
   isActive: Boolean!
-  isApproved: Boolean
+  isApproved: String
 }
 
 input UpdateMemberInput {
