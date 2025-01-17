@@ -7,9 +7,10 @@ import { ClientRepository } from './client.repository';
 import { UserRepository } from '../user/user.repository';
 import { CognitoService } from 'src/aws/cognito/cognito.service';
 import { ClientMembersModule } from './client-members/client-members.module';
+import { ClientSubscriptionModule } from './client-subscription/client-subscription.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Client]), ClientMembersModule],
+  imports: [TypeOrmModule.forFeature([Client]), ClientMembersModule, ClientSubscriptionModule],
   providers: [ClientResolver, ClientService, ClientRepository, UserRepository, CognitoService],
   exports: [ClientService, ClientRepository]
 })

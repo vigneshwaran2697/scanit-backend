@@ -49,6 +49,7 @@ export class ClientRepository extends BaseRepository<Client> {
           gstNumber: createClientInput.gstNumber,
           state: createClientInput.state,
           country: createClientInput.country,
+          planType: createClientInput.planType,
         });
       const password = this.getDecryptedPassword(
         createClientInput.passwordHash,

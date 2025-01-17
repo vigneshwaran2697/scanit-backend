@@ -22,6 +22,7 @@ type Client {
   isActive: Boolean
   isApproved: ApprovalStatus
   members: [Members!]!
+  planType: String
   state: String!
   updatedAt: DateTime
   userLimit: Float
@@ -37,6 +38,17 @@ input ClientContactInputs {
   phoneNumber: String!
 }
 
+type ClientSubscription {
+  createdAt: DateTime
+  deletedAt: DateTime
+  id: String
+  planDuration: Float
+  planDurationType: PlanDurationType
+  planName: String
+  planPrice: Float
+  updatedAt: DateTime
+}
+
 input CreateClientInput {
   Address: String!
   city: String!
@@ -49,9 +61,17 @@ input CreateClientInput {
   gstNumber: String!
   isActive: Boolean!
   passwordHash: String!
+  planType: String
   state: String!
   userLimit: Float!
   zipCode: Float!
+}
+
+input CreateClientSubscriptionInput {
+  planDuration: Float
+  planDurationType: PlanDurationType
+  planName: String
+  planPrice: Float
 }
 
 input CreateMemberInput {
@@ -116,13 +136,23 @@ type Members {
 
 type Mutation {
   createClient(createClientInput: CreateClientInput!): Client!
+  createClientSubscription(createClientSubscriptionInput: CreateClientSubscriptionInput!): ClientSubscription!
   createSuperAdmin(createSuperAdminInput: CreateSuperAdminInput!): User!
   createUser(createMemberInput: CreateMemberInput!): String!
   updateClient(updateClientInput: UpdateClientInput!): String!
   updateUser(updateMemberInput: UpdateMemberInput!): String!
 }
 
+enum PlanDurationType {
+  HALF_YEARLY
+  MONTHLY
+  ONE_TIME
+  QUARTERLY
+  YEARLY
+}
+
 type Query {
+  getAllClientSubscription: [ClientSubscription!]!
   getAllUsers(limit: Float!, offset: Float!, search: String!): [Members!]!
   getAllclients(limit: Float, offset: Float, search: String): [Client!]!
   getClient(id: String!): Client!

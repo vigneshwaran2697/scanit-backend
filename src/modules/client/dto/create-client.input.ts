@@ -32,6 +32,9 @@ export class CreateClientInput {
   @Field()
   passwordHash: string;
 
+  @Field({ nullable: true})
+  planType: string;
+
   @Field(() => [ClientContactInputs])
   clientContactInputs: ClientContactInputs[];
 

@@ -32,6 +32,10 @@ export class Client {
   userLimit: number;
 
   @Field({ nullable: true })
+  @Column({ name: 'c_plan_type', nullable: true })
+  planType: string;
+
+  @Field({ nullable: true })
   @Column({ nullable: true, name: 'c_is_active', default: true })
   isActive?: boolean;
 
