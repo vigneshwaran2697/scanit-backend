@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
@@ -15,7 +15,7 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { UserService } from './modules/user/user.service';
 import { SuperAdminModule } from './modules/super-admin/super-admin.module';
 import { ClientModule } from './modules/client/client.module';
-
+import * as cors from 'cors';
 
 @Module({
   imports: [
@@ -47,4 +47,14 @@ import { ClientModule } from './modules/client/client.module';
   controllers: [AppController],
   providers: [AppService, UserService],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(
+        cors({
+          origin: 'http://localhost:3000/',
+        }),
+      )
+      .forRoutes('/*');
+  }
+}
