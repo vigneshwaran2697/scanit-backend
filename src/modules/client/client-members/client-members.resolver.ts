@@ -56,4 +56,11 @@ export class ClientMembersResolver {
   ): Promise<String>{
     return this.clientMembersService.updateMember(updateMemberInput);
   }
+
+  @Query(() => Members, { name: 'getQRData' })
+  public async getQRData(
+    @Args('memberId') memberId: string,
+  ): Promise<Members> {
+    return this.clientMembersService.getQRData(memberId);
+  }
 }

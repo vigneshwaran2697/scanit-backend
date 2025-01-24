@@ -60,4 +60,14 @@ export class ClientMembersService {
         }
         return 'Member updated successfully';
     }
+
+    async getQRData(memberId: string): Promise<Members> {
+        const member = await this.memberRepo.createQueryBuilder('members')
+            .where('members.id = :memberId', { memberId })
+            .getOne();
+        if (!member) {
+            throw new Error('Member not found');
+        }
+        return member;
+    }
 }
