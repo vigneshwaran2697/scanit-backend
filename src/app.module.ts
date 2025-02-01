@@ -16,6 +16,7 @@ import { UserService } from './modules/user/user.service';
 import { SuperAdminModule } from './modules/super-admin/super-admin.module';
 import { ClientModule } from './modules/client/client.module';
 import * as cors from 'cors';
+import { SesModule } from './aws/ses/ses.module';
 
 @Module({
   imports: [
@@ -39,6 +40,7 @@ import * as cors from 'cors';
     UserModule,
     CognitoModule,
     S3Module,
+    SesModule,
     AuthModule,
     SuperAdminModule,
     SsmModule,

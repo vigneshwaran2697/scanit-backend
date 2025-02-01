@@ -8,12 +8,14 @@ import { Transactional } from 'typeorm-transactional';
 import { UserRole } from '../user/entities/user.entity';
 import { CognitoService } from 'src/aws/cognito/cognito.service';
 import { AES, enc } from 'crypto-js';
+import { SesService } from 'src/aws/ses/ses.service';
 @Injectable()
 export class ClientRepository extends BaseRepository<Client> {
   constructor(
     private readonly dataSource: DataSource,
     private readonly userRepo: UserRepository,
     private readonly cognitoService: CognitoService,
+    private readonly mailService: SesService,
   ) {
     super(Client, dataSource.createEntityManager());
   }
@@ -30,27 +32,27 @@ export class ClientRepository extends BaseRepository<Client> {
   public async createClient(
     createClientInput: CreateClientInput,
   ): Promise<Client> {
-      try {
-        const isExistingClient = await this.userRepo.findByEmail(
-          createClientInput?.clientEmailId,
-        );
-        if (isExistingClient) {
-          throw new Error('Client Email already exists');
-        }
-        const client = await this.save({
-          clientName: createClientInput.clientName,
-          clientEmailId: createClientInput.clientEmailId,
-          userLimit: createClientInput.userLimit,
-          isActive: createClientInput.isActive,
-          Address: createClientInput.Address,
-          city: createClientInput.city,
-          zipCode: createClientInput.zipCode,
-          gstDocument: createClientInput.gstDocument,
-          gstNumber: createClientInput.gstNumber,
-          state: createClientInput.state,
-          country: createClientInput.country,
-          planType: createClientInput.planType,
-        });
+    try {
+      const isExistingClient = await this.userRepo.findByEmail(
+        createClientInput?.clientEmailId,
+      );
+      if (isExistingClient) {
+        throw new Error('Client Email already exists');
+      }
+      const client = await this.save({
+        clientName: createClientInput.clientName,
+        clientEmailId: createClientInput.clientEmailId,
+        userLimit: createClientInput.userLimit,
+        isActive: createClientInput.isActive,
+        Address: createClientInput.Address,
+        city: createClientInput.city,
+        zipCode: createClientInput.zipCode,
+        gstDocument: createClientInput.gstDocument,
+        gstNumber: createClientInput.gstNumber,
+        state: createClientInput.state,
+        country: createClientInput.country,
+        planType: createClientInput.planType,
+      });
       const password = this.getDecryptedPassword(
         createClientInput.passwordHash,
       );
@@ -80,6 +82,14 @@ export class ClientRepository extends BaseRepository<Client> {
         clientId: client.clientId,
         userRole: UserRole.ADMIN,
       });
+
+      const _data = await this.mailService.sendEmail(
+        'teamscanit@gmail.com',
+        'New Client Created',
+        `Hi SuperAdmin,\n\nNew Client Created with email ${createClientInput.clientEmailId} and waiting for approval\n\nRegards,\nTeam Scanit`,
+      );
+      console.log(_data);
+      
       //Client user creation
       for (const clientUser of createClientInput.clientContactInputs) {
         await this.userRepo.save({
