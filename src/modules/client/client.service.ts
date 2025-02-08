@@ -43,6 +43,7 @@ export class ClientService {
       .createQueryBuilder('client')
       .leftJoinAndSelect('client.users', 'clientUsers')
       .where('client.clientId = :id', { id })
+      .andWhere('clientUsers.isPrimary = false')
       .getOne();
   }
 
