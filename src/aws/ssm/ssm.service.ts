@@ -55,4 +55,22 @@ export class SsmService {
        console.log('Error in fetching data from SSM');
     }
   }
+
+  public async getParams(paramName: string) {
+    try{
+      const ssmClient = new AWS.SSM({
+        region: config.region,
+      });
+      const data = await ssmClient
+        .getParameter({
+          Name: paramName,
+          WithDecryption: true,
+        })
+        .promise();
+      console.log(data);
+      return JSON.parse(data.Parameter.Value);
+    } catch (err) {
+       console.log('Error in fetching data from SSM');
+    }
+  }
 }

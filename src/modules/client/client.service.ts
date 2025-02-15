@@ -3,11 +3,15 @@ import { CreateClientInput } from './dto/create-client.input';
 import { UpdateClientInput } from './dto/update-client.input';
 import { ClientRepository } from './client.repository';
 import { Client } from './entities/client.entity';
+import { ClientSubscriptionRepository } from './client-subscription/client-subscription.repository';
 
 
 @Injectable()
 export class ClientService {
-  constructor(private readonly clientRepo: ClientRepository) {}
+  constructor(
+    private readonly clientRepo: ClientRepository,
+    private readonly clientSubscriptionRepository: ClientSubscriptionRepository,
+  ) {}
   async createClient(createClientInput: CreateClientInput): Promise<Client> {
     return this.clientRepo.createClient(createClientInput);
   }
@@ -39,12 +43,22 @@ export class ClientService {
     if (!id) {
       throw new Error('Client ID is required');
     }
-    return this.clientRepo
+    const client = await this.clientRepo
       .createQueryBuilder('client')
       .leftJoinAndSelect('client.users', 'clientUsers')
       .where('client.clientId = :id', { id })
       .andWhere('clientUsers.isPrimary = false')
       .getOne();
+
+    const clientSubscription = await this.clientSubscriptionRepository
+      .createQueryBuilder('clientSubscription')
+      .select('clientSubscription')
+      .where('clientSubscription.planName = :planName', { planName: client.planType })
+      .getOne();
+
+    client['clientSubscription'] = clientSubscription;
+
+     return client; 
   }
 
   async updateClient(

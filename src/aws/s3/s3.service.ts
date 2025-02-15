@@ -3,12 +3,21 @@ import { S3Object } from './entities/s3.entity';
 import { S3 } from 'aws-sdk';
 import { config as configData } from '../../config/config';
 import { parseUrl } from '@aws-sdk/url-parser';
+import { SignedUrlService } from './s3signedurl.service';
 
 const config = configData[process.env.NODE_ENV || 'development'];
 
 @Injectable()
 export class S3Service {
+
+  constructor(    
+    private readonly signedUrlService: SignedUrlService,
+  ) {
+  }
+
   public async getSignedUrl(reqType, bucketName, key) {
+  
+
     const signedUrlExpireSeconds = 60 * 60;
 
     const s3 = new S3({
@@ -20,9 +29,14 @@ export class S3Service {
       Key: key,
       Expires: signedUrlExpireSeconds,
     });
+
+    const data = await this.signedUrlService.resolveGetSignedUrl(`key`);
+    console.log('data -->',data);
+    
     return new S3Object({
-      preSignedUrl: url,
+      preSignedUrl: data,
     });
+
   }
 
   public async getPreSignedUrl(objectUrl: string) {

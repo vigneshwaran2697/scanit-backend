@@ -32,6 +32,7 @@
     "db:revert": "npm run typeorm -- migration:revert"
   },
   "dependencies": {
+    "@aws-sdk/cloudfront-signer": "^3.734.0",
     "@aws-sdk/url-parser": "^3.374.0",
     "@nestjs/apollo": "^12.2.1",
     "@nestjs/common": "^10.0.0",
