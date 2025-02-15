@@ -86,7 +86,7 @@ export class ClientRepository extends BaseRepository<Client> {
       const _data = await this.mailService.sendEmail(
         'teamscanit@gmail.com',
         'New Client Created',
-        `Hi SuperAdmin,\n\nNew Client Created with email ${createClientInput.clientEmailId} and waiting for approval\n\nRegards,\nTeam Scanit`,
+        `Hi SuperAdmin,\n\nGreetings from Idcheck team. New Client Created with email ${createClientInput.clientEmailId} and waiting for approval\n\nRegards,\nTeam Scanit`,
       );
       console.log(_data);
       
