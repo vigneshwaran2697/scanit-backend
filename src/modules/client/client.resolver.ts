@@ -8,6 +8,7 @@ import { UseGuards } from '@nestjs/common';
 import { CognitoAuthGuard } from 'src/auth/guards/cognito.guard';
 import { RolesGuard } from 'src/auth/guards/role-auth.guard';
 import { Client } from './entities/client.entity';
+import { ClientListResponse } from './entities/clientList.objectType';
 
 @Resolver(() => Client)
 export class ClientResolver {
@@ -20,7 +21,7 @@ export class ClientResolver {
 
   @UseGuards(CognitoAuthGuard, RolesGuard)
   @Roles(UserRoles.SUPER_ADMIN)
-  @Query(() => [Client], { name: 'getAllclients' })
+  @Query(() => [ClientListResponse], { name: 'getAllclients' })
   async findAll(
     @Args('search', { type: () => String, nullable: true }) search: string,
     @Args('offset', { type: () => Number, nullable: true }) offset: number,

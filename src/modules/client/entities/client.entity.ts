@@ -51,6 +51,9 @@ export class Client {
   @OneToMany(() => Members, (members) => members.client)
   members: Members[];
 
+  @Field({ nullable: true})
+  userCreated: number;
+
   @Field()
   @Column({ name: 'c_address' })
   Address: string;

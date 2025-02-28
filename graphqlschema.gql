@@ -25,6 +25,7 @@ type Client {
   planType: String
   state: String!
   updatedAt: DateTime
+  userCreated: Float
   userLimit: Float
   users: [User!]!
   zipCode: Float!
@@ -36,6 +37,18 @@ input ClientContactInputs {
   name: String!
   order: Float!
   phoneNumber: String!
+}
+
+type ClientListResponse {
+  Address: String
+  clientEmailId: String
+  clientId: String!
+  clientName: String!
+  createdAt: DateTime
+  isActive: Boolean
+  updatedAt: DateTime
+  userCreated: Float
+  userLimit: Float
 }
 
 type ClientSubscription {
@@ -154,7 +167,7 @@ enum PlanDurationType {
 type Query {
   getAllClientSubscription: [ClientSubscription!]!
   getAllUsers(limit: Float!, offset: Float!, search: String!): [Members!]!
-  getAllclients(limit: Float, offset: Float, search: String): [Client!]!
+  getAllclients(limit: Float, offset: Float, search: String): [ClientListResponse!]!
   getClient(id: String!): Client!
   getClientApprovalList(limit: Float, offset: Float, search: String): [Client!]!
   getClientRejectedList(limit: Float, offset: Float, search: String): [Client!]!

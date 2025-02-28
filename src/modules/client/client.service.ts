@@ -22,22 +22,36 @@ export class ClientService {
     offset: number,
     limit: number,
   ): Promise<Client[]> {
-    const queryBuilder = this.clientRepo.createQueryBuilder('client')
-          .leftJoinAndSelect('client.users', 'clientUsers')
-          .where('client.isApproved = :isApproved', { isApproved: 'APPROVED' });
-    if (search) {
-      queryBuilder.andWhere('client.clientName like :search', {
-        search: `%${search}%`,
-      });
-    }
-    queryBuilder.orderBy('client.updatedAt', 'DESC');
-    if (offset) {
-      queryBuilder.offset(offset);
-    }
-    if (limit) {
-      queryBuilder.limit(limit);
-    }
-    return queryBuilder.getMany();
+    const queryBuilder = await this.clientRepo.query(`
+      SELECT 
+        "client"."c_id" AS "clientId", 
+        "client"."c_name" AS "clientName", 
+        "client"."c_email_id" AS "clientEmailId", 
+        "client"."c_is_active" AS "isActive", 
+        "client"."c_created_at" AS "createdAt", 
+        "client"."c_updated_at" AS "updatedAt", 
+        "client"."c_user_limit" AS "userLimit",
+        "client"."c_address" AS "Address",
+        (
+          SELECT 
+            COUNT(*) 
+          FROM 
+            members 
+          WHERE 
+            "client"."c_id" = members.client_id
+        )::INTEGER AS "userCreated" 
+      FROM 
+        "client" "client" 
+      WHERE 
+        ("client"."c_is_approved" = 'APPROVED') 
+        AND ("client"."c_deleted_at" IS NULL) 
+      ORDER BY 
+        "updatedAt" DESC 
+      `)
+      
+    console.log(queryBuilder);
+      
+    return queryBuilder;
   }
 
   async getClientById(id: string): Promise<Client> {
@@ -58,7 +72,10 @@ export class ClientService {
   ): Promise<string> {
     try {
       delete updateClientInput.clientId;
-      const client = await this.getClientById(clientId);
+      const client = await this.clientRepo.createQueryBuilder('client')
+            .select(['client.clientId', 'client.clientName', 'client.clientEmailId', 'client.isApproved'])
+            .where('client.clientId = :id', { id: clientId })
+            .getOne();
       
       if (!client) {
         throw new Error('Client not found');
@@ -67,30 +84,24 @@ export class ClientService {
         isApproved: updateClientInput.isApproved,
         isActive: updateClientInput.isActive,
       });
-
-      if (updateClientInput.isApproved === 'REJECTED' && client.isApproved === 'PENDING' && client.clientEmailId.length) {
+      if (updateClientInput.isApproved === 'REJECTED' && client.isApproved === 'PENDING' && client.clientEmailId?.length) {
         // send email to client
-        const _data = await this.mailService.sendEmail(
+        await this.mailService.sendEmail(
           `${client.clientEmailId}`,
           'Scanit Client Rejected!',
           `Hi ${client.clientName},\n\nGreetings from Idcheck team. The Client created with email ${client.clientEmailId} has been rejected by admin. For additional information contact Idcheck team.\n\nRegards,\nTeam Idcheck.`,
         );
-        console.log(`Email sent to client: ${_data}`);
-        
       }
   
-      if (updateClientInput.isApproved === 'APPROVED' && client.isApproved === 'PENDING' && client.clientEmailId.length) {
-        // send email to client
-        const _data = await this.mailService.sendEmail(
+      if (updateClientInput.isApproved === 'APPROVED' && client.isApproved === 'PENDING' && client.clientEmailId?.length) {
+        await this.mailService.sendEmail(
           `${client.clientEmailId}`,
           'Scanit Client Approved',
           `Hi ${client.clientName},\n\nGreetings from Idcheck team. The Client created with email ${client.clientEmailId} is successfully approved by admin. \n please login as client to https://www.idcheck.co.in/client/login. \n\nRegards,\nTeam Idcheck.`,
         );
-        console.log(`Email sent to client: ${_data}`);
       }
     } catch(e) {
       console.log(`Error in sending email to client: ${e}`);
-      
     }
     return 'Client updated successfully';
   }
