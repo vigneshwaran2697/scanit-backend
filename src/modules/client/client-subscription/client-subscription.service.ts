@@ -14,23 +14,30 @@ export class ClientSubscriptionService {
     return this.clientSubscripRepo.save(createClientSubscriptionInput);
   }
 
-  public async getAllClientSubscription() {
+  public async getAllClientSubscription(): Promise<ClientSubscription[]> {
     return this.clientSubscripRepo.createQueryBuilder('clientSubscription').getMany();
   }
 
-  public async getAllClientSubscriptionBySuperAdmin() {
+  public async getAllClientSubscriptionBySuperAdmin(): Promise<ClientSubscription[]> {
     return this.clientSubscripRepo.createQueryBuilder('clientSubscription').getMany();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} clientSubscription`;
+  async getOneSubscriptions(id: string): Promise<ClientSubscription> {
+    return this.clientSubscripRepo.createQueryBuilder('clientSubscription').where('clientSubscription.id = :id', { id }).getOne();
   }
 
-  update(id: number, updateClientSubscriptionInput: UpdateClientSubscriptionInput) {
-    return `This action updates a #${id} clientSubscription`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} clientSubscription`;
+  async updateSubscriptions(updateSubscriptionsInput: UpdateClientSubscriptionInput): Promise<string> {
+    try{
+      const id = updateSubscriptionsInput.id;
+      delete updateSubscriptionsInput.id;
+      await this.clientSubscripRepo.update(
+        { id }, {
+          ...updateSubscriptionsInput
+        });
+      return 'Updated';
+    } catch (err) {
+      console.log(`Error in updateSubscriptions: ${err}`);
+      
+    }
   }
 }

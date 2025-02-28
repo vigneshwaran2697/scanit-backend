@@ -8,6 +8,8 @@ import { Roles } from 'src/auth/decorators/roles.decorator';
 import { CognitoAuthGuard } from 'src/auth/guards/cognito.guard';
 import { RolesGuard } from 'src/auth/guards/role-auth.guard';
 import { UserRoles } from 'src/utils/app-constants';
+import { String } from 'aws-sdk/clients/apigateway';
+import { UpdateClientSubscriptionInput } from './dto/update-client-subscription.input';
 
 @Resolver(() => ClientSubscription)
 export class ClientSubscriptionResolver {
@@ -21,23 +23,32 @@ export class ClientSubscriptionResolver {
   }
 
   @Query(() => [ClientSubscription])
-  public async getAllClientSubscription() {
+  public async getAllClientSubscription(): Promise<ClientSubscription[]> {
     return this.clientSubscriptionService.getAllClientSubscription();
   }
 
   @UseGuards(CognitoAuthGuard, RolesGuard)
   @Roles(UserRoles.SUPER_ADMIN)
   @Query(() => [ClientSubscription])
-  async getAllClientSubscriptionBySuperAdmin() {
+  async getAllClientSubscriptionBySuperAdmin(): Promise<ClientSubscription[]> {
     return this.clientSubscriptionService.getAllClientSubscriptionBySuperAdmin();
   }
 
 
+  @UseGuards(CognitoAuthGuard, RolesGuard)
+  @Roles(UserRoles.SUPER_ADMIN)
+  @Query(() => ClientSubscription)
+  findOne(@Args('id') id: string): Promise<ClientSubscription> {
+    return this.clientSubscriptionService.getOneSubscriptions(id);
+  }
 
-  // @Query('clientSubscription')
-  // findOne(@Args('id') id: number) {
-  //   return this.clientSubscriptionService.findOne(id);
-  // }
+
+  @UseGuards(CognitoAuthGuard, RolesGuard)
+  @Roles(UserRoles.SUPER_ADMIN)
+  @Mutation(() => String)
+  updateSubscriptions(@Args('updateClientSubscriptionInput') updateClientSubscriptionInput: UpdateClientSubscriptionInput): Promise<String> {
+    return this.clientSubscriptionService.updateSubscriptions(updateClientSubscriptionInput);
+  }
 
   // @Mutation('updateClientSubscription')
   // update(@Args('updateClientSubscriptionInput') updateClientSubscriptionInput: UpdateClientSubscriptionInput) {

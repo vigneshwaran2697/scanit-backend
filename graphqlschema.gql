@@ -153,6 +153,7 @@ type Mutation {
   createSuperAdmin(createSuperAdminInput: CreateSuperAdminInput!): User!
   createUser(createMemberInput: CreateMemberInput!): String!
   updateClient(updateClientInput: UpdateClientInput!): String!
+  updateSubscriptions(updateClientSubscriptionInput: UpdateClientSubscriptionInput!): String!
   updateUser(updateMemberInput: UpdateMemberInput!): String!
 }
 
@@ -165,6 +166,7 @@ enum PlanDurationType {
 }
 
 type Query {
+  findOne(id: String!): ClientSubscription!
   getAllClientSubscription: [ClientSubscription!]!
   getAllClientSubscriptionBySuperAdmin: [ClientSubscription!]!
   getAllUsers(limit: Float!, offset: Float!, search: String!): [Members!]!
@@ -188,6 +190,10 @@ input UpdateClientInput {
   clientId: String!
   isActive: Boolean!
   isApproved: String
+}
+
+input UpdateClientSubscriptionInput {
+  id: String!
 }
 
 input UpdateMemberInput {
