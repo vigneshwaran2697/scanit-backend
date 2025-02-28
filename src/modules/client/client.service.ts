@@ -102,7 +102,7 @@ export class ClientService {
   ): Promise<Client[]> {
     const queryBuilder = this.clientRepo.createQueryBuilder('client')
           .leftJoinAndSelect('client.users', 'clientUsers')
-          .where('client.isApproved IN (:...isApproved)', { isApproved: ['PENDING', 'REJECTED'] });
+          .where('client.isApproved IN (:...isApproved)', { isApproved: ['PENDING'] });
     if (search) {
       queryBuilder.andWhere('client.clientName like :search', {
         search: `%${search}%`,
@@ -116,5 +116,28 @@ export class ClientService {
       queryBuilder.limit(limit);
     }
     return queryBuilder.getMany();
+  }
+
+  async getClientRejectedList(
+    search: string, 
+    offset: number,
+    limit: number,
+  ) {
+      const queryBuilder = this.clientRepo.createQueryBuilder('client')
+      .leftJoinAndSelect('client.users', 'clientUsers')
+      .where('client.isApproved IN (:...isApproved)', { isApproved: ['REJECTED'] });
+      if (search) {
+      queryBuilder.andWhere('client.clientName like :search', {
+        search: `%${search}%`,
+      });
+      }
+      queryBuilder.orderBy('client.updatedAt', 'DESC');
+      if (offset) {
+      queryBuilder.offset(offset);
+      }
+      if (limit) {
+      queryBuilder.limit(limit);
+      }
+      return queryBuilder.getMany();
   }
 }

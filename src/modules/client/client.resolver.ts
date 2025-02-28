@@ -54,6 +54,19 @@ export class ClientResolver {
     return this.clientService.getClientApprovalList(search, offset, limit);
   }
 
+  @UseGuards(CognitoAuthGuard, RolesGuard)
+  @Roles(UserRoles.SUPER_ADMIN)
+  @Query(() => [Client], { name: 'getClientRejectedList' })
+  async getClientRejectedList(
+    @Args('search', { type: () => String, nullable: true }) search: string,
+    @Args('offset', { type: () => Number, nullable: true }) offset: number,
+    @Args('limit', { type: () => Number, nullable: true }) limit: number,
+  ) {
+    return this.clientService.getClientRejectedList(search, offset, limit);
+  }
+
+
+
   // @UseGuards(CognitoAuthGuard, RolesGuard)
   // @Roles(UserRoles.ADMIN)
   // @Mutation('removeClient')

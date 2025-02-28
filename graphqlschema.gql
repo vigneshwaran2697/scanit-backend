@@ -157,6 +157,7 @@ type Query {
   getAllclients(limit: Float, offset: Float, search: String): [Client!]!
   getClient(id: String!): Client!
   getClientApprovalList(limit: Float, offset: Float, search: String): [Client!]!
+  getClientRejectedList(limit: Float, offset: Float, search: String): [Client!]!
   getQRData(memberId: String!): Members!
   getSignedUrlForDownload(bucketName: String!, key: String!): S3Object!
   getSignedUrlForUpload(bucketName: String!, key: String!): S3Object!
