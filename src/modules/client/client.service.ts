@@ -68,7 +68,7 @@ export class ClientService {
         isActive: updateClientInput.isActive,
       });
 
-      if (updateClientInput.isApproved === 'REJECTED' && client.isApproved === 'PENDING') {
+      if (updateClientInput.isApproved === 'REJECTED' && client.isApproved === 'PENDING' && client.clientEmailId.length) {
         // send email to client
         const _data = await this.mailService.sendEmail(
           `${client.clientEmailId}`,
@@ -79,7 +79,7 @@ export class ClientService {
         
       }
   
-      if (updateClientInput.isApproved === 'APPROVED' && client.isApproved === 'PENDING') {
+      if (updateClientInput.isApproved === 'APPROVED' && client.isApproved === 'PENDING' && client.clientEmailId.length) {
         // send email to client
         const _data = await this.mailService.sendEmail(
           `${client.clientEmailId}`,
