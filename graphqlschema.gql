@@ -166,6 +166,7 @@ enum PlanDurationType {
 
 type Query {
   getAllClientSubscription: [ClientSubscription!]!
+  getAllClientSubscriptionBySuperAdmin: [ClientSubscription!]!
   getAllUsers(limit: Float!, offset: Float!, search: String!): [Members!]!
   getAllclients(limit: Float, offset: Float, search: String): [ClientListResponse!]!
   getClient(id: String!): Client!

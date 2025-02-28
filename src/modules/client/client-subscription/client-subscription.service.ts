@@ -18,6 +18,10 @@ export class ClientSubscriptionService {
     return this.clientSubscripRepo.createQueryBuilder('clientSubscription').getMany();
   }
 
+  public async getAllClientSubscriptionBySuperAdmin() {
+    return this.clientSubscripRepo.createQueryBuilder('clientSubscription').getMany();
+  }
+
   findOne(id: number) {
     return `This action returns a #${id} clientSubscription`;
   }

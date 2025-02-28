@@ -21,9 +21,18 @@ export class ClientSubscriptionResolver {
   }
 
   @Query(() => [ClientSubscription])
-  getAllClientSubscription() {
+  public async getAllClientSubscription() {
     return this.clientSubscriptionService.getAllClientSubscription();
   }
+
+  @UseGuards(CognitoAuthGuard, RolesGuard)
+  @Roles(UserRoles.SUPER_ADMIN)
+  @Query(() => [ClientSubscription])
+  async getAllClientSubscriptionBySuperAdmin() {
+    return this.clientSubscriptionService.getAllClientSubscriptionBySuperAdmin();
+  }
+
+
 
   // @Query('clientSubscription')
   // findOne(@Args('id') id: number) {
