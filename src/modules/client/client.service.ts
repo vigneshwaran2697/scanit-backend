@@ -83,13 +83,20 @@ export class ClientService {
       await this.clientRepo.update(clientId, {
         isApproved: updateClientInput.isApproved,
         isActive: updateClientInput.isActive,
+        rejectedReason: updateClientInput.rejectedReason,
       });
+
       if (updateClientInput.isApproved === 'REJECTED' && client.isApproved === 'PENDING' && client.clientEmailId?.length) {
-        // send email to client
+        let mailBody = `Hi ${client.clientName},\n\nGreetings from Idcheck team. The Client created with email ${client.clientEmailId} has been rejected by admin. For additional information contact Idcheck team.\n\nRegards,\nTeam Idcheck.`;
+
+        if (updateClientInput?.rejectedReason) {
+          mailBody = mailBody + `\n\nRejected Reason: ${updateClientInput.rejectedReason}`;
+        }
+
         await this.mailService.sendEmail(
           `${client.clientEmailId}`,
           'Scanit Client Rejected!',
-          `Hi ${client.clientName},\n\nGreetings from Idcheck team. The Client created with email ${client.clientEmailId} has been rejected by admin. For additional information contact Idcheck team.\n\nRegards,\nTeam Idcheck.`,
+          mailBody,
         );
       }
   

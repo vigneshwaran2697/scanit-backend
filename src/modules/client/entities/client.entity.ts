@@ -36,6 +36,10 @@ export class Client {
   planType: string;
 
   @Field({ nullable: true })
+  @Column({ name: 'c_rejected_reason', nullable: true })
+  rejectedReason: string;
+
+  @Field({ nullable: true })
   @Column({ nullable: true, name: 'c_is_active', default: true })
   isActive?: boolean;
 

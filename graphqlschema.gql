@@ -23,6 +23,7 @@ type Client {
   isApproved: ApprovalStatus
   members: [Members!]!
   planType: String
+  rejectedReason: String
   state: String!
   updatedAt: DateTime
   userCreated: Float
@@ -190,6 +191,7 @@ input UpdateClientInput {
   clientId: String!
   isActive: Boolean!
   isApproved: String
+  rejectedReason: String
 }
 
 input UpdateClientSubscriptionInput {

@@ -11,4 +11,7 @@ export class UpdateClientInput {
 
   @Field()
   isActive: boolean;
+
+  @Field({ nullable: true})
+  rejectedReason: string;
 }
