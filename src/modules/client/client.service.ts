@@ -4,6 +4,7 @@ import { UpdateClientInput } from './dto/update-client.input';
 import { ClientRepository } from './client.repository';
 import { Client } from './entities/client.entity';
 import { SesService } from 'src/aws/ses/ses.service';
+import { CognitoService } from 'src/aws/cognito/cognito.service';
 
 
 @Injectable()
@@ -11,6 +12,7 @@ export class ClientService {
   constructor(
     private readonly clientRepo: ClientRepository,
     private readonly mailService: SesService,
+    private readonly cognitoService: CognitoService,
 
   ) {}
   async createClient(createClientInput: CreateClientInput): Promise<Client> {
@@ -86,11 +88,17 @@ export class ClientService {
         rejectedReason: updateClientInput.rejectedReason,
       });
 
-      if (updateClientInput.isApproved === 'REJECTED' && client.isApproved === 'PENDING' && client.clientEmailId?.length) {
+      if (
+        updateClientInput.isApproved === 'REJECTED' &&
+        client.isApproved === 'PENDING' &&
+        client.clientEmailId?.length
+      ) {
         let mailBody = `Hi ${client.clientName},\n\nGreetings from Idcheck team. The Client created with email ${client.clientEmailId} has been rejected by admin. For additional information contact Idcheck team.\n\nRegards,\nTeam Idcheck.`;
 
         if (updateClientInput?.rejectedReason) {
-          mailBody = mailBody + `\n\nRejected Reason: ${updateClientInput.rejectedReason}`;
+          mailBody =
+            mailBody +
+            `\n\nRejected Reason: ${updateClientInput.rejectedReason}`;
         }
 
         await this.mailService.sendEmail(
@@ -100,7 +108,12 @@ export class ClientService {
         );
       }
   
-      if (updateClientInput.isApproved === 'APPROVED' && client.isApproved === 'PENDING' && client.clientEmailId?.length) {
+      if (
+        updateClientInput.isApproved === 'APPROVED' &&
+        client.isApproved === 'PENDING' &&
+        client.clientEmailId?.length
+      ) {
+        await this.cognitoService.confirmCognitoUser(client.clientEmailId);
         await this.mailService.sendEmail(
           `${client.clientEmailId}`,
           'Scanit Client Approved',

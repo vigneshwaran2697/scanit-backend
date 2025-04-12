@@ -196,6 +196,10 @@ input UpdateClientInput {
 
 input UpdateClientSubscriptionInput {
   id: String!
+  planDuration: Float
+  planDurationType: PlanDurationType
+  planName: String
+  planPrice: Float
 }
 
 input UpdateMemberInput {

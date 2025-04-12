@@ -39,7 +39,7 @@ export class CognitoService {
       });
   }
 
-  public async createUserInCognito(args) {
+  public async createUserInCognito(args: any, isClient=false) {
     const params = {
       ClientId: config.appConfig.ClientId,
       Password: args.password,
@@ -51,12 +51,14 @@ export class CognitoService {
       Username: args.emailId,
     };
     const data = await CognitoService.cognitoIdentity.signUp(params).promise();
-    try {
-      await CognitoService.cognitoIdentity
-        .adminConfirmSignUp(params1)
-        .promise();
-    } catch (error) {
-      console.log('Cognito User Confirm Error------', error);
+    if (!isClient) {
+      try {
+        await CognitoService.cognitoIdentity
+          .adminConfirmSignUp(params1)
+          .promise();
+      } catch (error) {
+        console.log('Cognito User Confirm Error------', error);
+      }
     }
     if (args.groupName) {
       params1.GroupName = args.groupName;
@@ -65,6 +67,20 @@ export class CognitoService {
       }, 2000);
     }
     return data;
+  }
+
+  public async confirmCognitoUser(emailId: string): Promise<void|never> {
+    const params: any = {
+      UserPoolId: config.appConfig.PoolId,
+      Username: emailId,
+    };
+    try {
+      await CognitoService.cognitoIdentity
+        .adminConfirmSignUp(params)
+        .promise();
+    } catch (error) {
+      console.log('Cognito User Confirm Error------', error);
+    }
   }
 
   public async getUserFromCognito(userName: string) {

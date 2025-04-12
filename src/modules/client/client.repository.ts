@@ -69,7 +69,7 @@ export class ClientRepository extends BaseRepository<Client> {
           { Name: 'custom:firstname', Value: createClientInput.clientName },
           { Name: 'custom:lastname', Value: '' },
         ],
-      });
+      }, true);
       const username = cognitoResp?.UserSub;
       await this.userRepo.save({
         emailId: createClientInput.clientEmailId,
