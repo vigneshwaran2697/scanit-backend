@@ -181,6 +181,7 @@ type Query {
   getUserById(memberId: String!): Members!
   s3FileDelete(bucketName: String!, key: String!): String!
   signIn(emailId: String!, password: String!): String
+  updatePlanType: String!
 }
 
 type S3Object {

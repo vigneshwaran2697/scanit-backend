@@ -67,6 +67,15 @@ export class ClientResolver {
   }
 
 
+  @UseGuards(CognitoAuthGuard, RolesGuard)
+  @Roles(UserRoles.SUPER_ADMIN)
+  @Query(() => String, { name: 'updatePlanType' })
+  async updatePlanType(
+  ) {
+    return this.clientService.updatePlanType();
+  }
+
+
 
   // @UseGuards(CognitoAuthGuard, RolesGuard)
   // @Roles(UserRoles.ADMIN)

@@ -5,6 +5,7 @@ import { ClientRepository } from './client.repository';
 import { Client } from './entities/client.entity';
 import { SesService } from 'src/aws/ses/ses.service';
 import { CognitoService } from 'src/aws/cognito/cognito.service';
+import { ClientSubscriptionRepository } from './client-subscription/client-subscription.repository';
 
 
 @Injectable()
@@ -13,6 +14,7 @@ export class ClientService {
     private readonly clientRepo: ClientRepository,
     private readonly mailService: SesService,
     private readonly cognitoService: CognitoService,
+    private readonly clientSubscriptionRepo: ClientSubscriptionRepository,
 
   ) {}
   async createClient(createClientInput: CreateClientInput): Promise<Client> {
@@ -60,12 +62,19 @@ export class ClientService {
     if (!id) {
       throw new Error('Client ID is required');
     }
-    return this.clientRepo
+    const client = await this.clientRepo
       .createQueryBuilder('client')
       .leftJoinAndSelect('client.users', 'clientUsers')
       .where('client.clientId = :id', { id })
       .andWhere('clientUsers.isPrimary = false')
       .getOne();
+
+      const planName = await this.clientSubscriptionRepo.findOneBy({ id: client?.planType });
+      
+      if (planName) {
+        client.planType = planName.planName;
+      }
+      return client;
   }
 
   async updateClient(
@@ -170,5 +179,10 @@ export class ClientService {
       queryBuilder.limit(limit);
       }
       return queryBuilder.getMany();
+  }
+
+  async updatePlanType() {
+    await this.clientRepo.query(`update public.client set c_plan_type = '09c5d25a-5b04-4853-9e32-35e8e8e40825'`)
+    return 'Success'
   }
 }
