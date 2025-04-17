@@ -72,7 +72,7 @@ export class ClientService {
       const planName = await this.clientSubscriptionRepo.findOneBy({ id: client?.planType });
       
       if (planName) {
-        client.planType = planName.planName;
+        client.planType = planName?.planName ? planName.planName : client.planType
       }
       return client;
   }
@@ -179,10 +179,5 @@ export class ClientService {
       queryBuilder.limit(limit);
       }
       return queryBuilder.getMany();
-  }
-
-  async updatePlanType() {
-    await this.clientRepo.query(`update public.client set c_plan_type = '09c5d25a-5b04-4853-9e32-35e8e8e40825'`)
-    return 'Success'
   }
 }
