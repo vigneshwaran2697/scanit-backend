@@ -71,7 +71,7 @@ export class ClientService {
 
       const planName = await this.clientSubscriptionRepo.findOneBy({ id: client?.planType });
       
-      if (planName) {
+      if (planName !== null && planName?.planName) {
         client.planType = planName?.planName ? planName.planName : client.planType
       }
       return client;
