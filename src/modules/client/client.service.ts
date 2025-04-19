@@ -66,10 +66,13 @@ export class ClientService {
       .createQueryBuilder('client')
       .leftJoinAndSelect('client.users', 'clientUsers')
       .where('client.clientId = :id', { id })
-      .andWhere('clientUsers.isPrimary = false')
       .getOne();
 
-      const planName = await this.clientSubscriptionRepo.findOneBy({ id: client?.planType });
+      const planName = await this.clientSubscriptionRepo
+        .createQueryBuilder('subscription')
+        .select('subscription')
+        .where('subscription.id = :id', { id: client?.planType })
+        .getOne();
       
       if (planName !== null && planName?.planName) {
         client.planType = planName?.planName ? planName.planName : client.planType
