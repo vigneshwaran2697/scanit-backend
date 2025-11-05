@@ -1,4 +1,4 @@
-import { Field, InputType } from "@nestjs/graphql";
+import { Field, InputType, ObjectType } from "@nestjs/graphql";
 
 @InputType()
 export class ClientContactInputs {
@@ -64,4 +64,32 @@ export class CreateClientInput {
 
   @Field()
   gstNumber: string;
+}
+
+@ObjectType()
+export class ClientPropertyResponse {
+  @Field()
+  clientId: string;
+
+  @Field({ nullable: true })
+  logoUrl?: string;
+
+  @Field({ nullable: true })
+  colorCode?: string;
+
+  @Field()
+  clientName: string;
+}
+
+@InputType()
+export class UpdateClientProperty {
+  @Field()
+  clientId: string;
+
+  @Field({ nullable: true })
+  logoUrl?: string;
+
+  @Field({ nullable: true })
+  colorCode?: string;
+
 }

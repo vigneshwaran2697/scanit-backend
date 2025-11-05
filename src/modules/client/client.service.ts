@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { CreateClientInput } from './dto/create-client.input';
+import { CreateClientInput, UpdateClientProperty } from './dto/create-client.input';
 import { UpdateClientInput } from './dto/update-client.input';
 import { ClientRepository } from './client.repository';
 import { Client } from './entities/client.entity';
@@ -182,5 +182,13 @@ export class ClientService {
       queryBuilder.limit(limit);
       }
       return queryBuilder.getMany();
+  }
+
+  async getClientProperties(clientId: string) {
+    return this.clientRepo.getClientProperties(clientId);
+  }
+
+  async updateClientProperties(updateClientProperty: UpdateClientProperty) {
+    return this.clientRepo.updateClientProperties(updateClientProperty);
   }
 }

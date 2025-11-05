@@ -2,7 +2,7 @@ import { BaseRepository } from 'src/database/base.respoitory';
 import { Client } from './entities/client.entity';
 import { DataSource } from 'typeorm';
 import { Injectable } from '@nestjs/common';
-import { CreateClientInput } from './dto/create-client.input';
+import { CreateClientInput, UpdateClientProperty } from './dto/create-client.input';
 import { UserRepository } from '../user/user.repository';
 import { Transactional } from 'typeorm-transactional';
 import { UserRole } from '../user/entities/user.entity';
@@ -106,6 +106,25 @@ export class ClientRepository extends BaseRepository<Client> {
       return client;
     } catch (e) {
       console.log(`Error creating client in cognito: ${e}`);
+    }
+  }
+
+  async getClientProperties(clientId: string) {
+    return this.createQueryBuilder('client')
+      .select(['client.clientId', 'client.logoUrl', 'client.colorCode', 'client.clientName'])
+      .where('client.clientId = :clientId', { clientId })
+      .getOne();
+  }
+
+  async updateClientProperties(updateClientProperty: UpdateClientProperty) {
+    const { clientId, logoUrl, colorCode } = updateClientProperty;
+    const response = await this.createQueryBuilder()
+      .update(Client)
+      .set({ logoUrl, colorCode })
+      .where('clientId = :clientId', { clientId })
+      .execute();
+    if (response.affected) {
+      return this.getClientProperties(clientId);
     }
   }
 }

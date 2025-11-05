@@ -14,6 +14,7 @@ type Client {
   clientEmailId: String
   clientId: String!
   clientName: String
+  colorCode: String
   country: String!
   createdAt: DateTime!
   deletedAt: DateTime
@@ -21,6 +22,7 @@ type Client {
   gstNumber: String!
   isActive: Boolean
   isApproved: ApprovalStatus
+  logoUrl: String
   members: [Members!]!
   planType: String
   rejectedReason: String
@@ -50,6 +52,13 @@ type ClientListResponse {
   updatedAt: DateTime
   userCreated: Float
   userLimit: Float
+}
+
+type ClientPropertyResponse {
+  clientId: String!
+  clientName: String!
+  colorCode: String
+  logoUrl: String
 }
 
 type ClientSubscription {
@@ -154,6 +163,7 @@ type Mutation {
   createSuperAdmin(createSuperAdminInput: CreateSuperAdminInput!): User!
   createUser(createMemberInput: CreateMemberInput!): String!
   updateClient(updateClientInput: UpdateClientInput!): String!
+  updateClientProperties(colorCode: String, logoUrl: String): ClientPropertyResponse!
   updateSubscriptions(updateClientSubscriptionInput: UpdateClientSubscriptionInput!): String!
   updateUser(updateMemberInput: UpdateMemberInput!): String!
 }
@@ -174,6 +184,7 @@ type Query {
   getAllclients(limit: Float, offset: Float, search: String): [ClientListResponse!]!
   getClient(id: String!): Client!
   getClientApprovalList(limit: Float, offset: Float, search: String): [Client!]!
+  getClientProperties: ClientPropertyResponse!
   getClientRejectedList(limit: Float, offset: Float, search: String): [Client!]!
   getQRData(memberId: String!): Members!
   getSignedUrlForDownload(bucketName: String!, key: String!): S3Object!

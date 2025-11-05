@@ -43,6 +43,14 @@ export class Client {
   @Column({ nullable: true, name: 'c_is_active', default: true })
   isActive?: boolean;
 
+  @Field({ nullable: true })
+  @Column({ nullable: true, name: 'c_logo_url' })
+  logoUrl?: string;
+
+  @Field({ nullable: true })
+  @Column({ nullable: true, name: 'c_color_code' })
+  colorCode?: string;
+
   @Field(() => ApprovalStatus, { nullable: true })
   @Column({ nullable: true, name: 'c_is_approved', type: 'enum', enum: ApprovalStatus, default: ApprovalStatus.PENDING })
   isApproved?: ApprovalStatus;
