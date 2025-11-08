@@ -63,6 +63,7 @@ export class ClientMembersService {
 
     async getQRData(memberId: string): Promise<Members> {
         const member = await this.memberRepo.createQueryBuilder('members')
+            .leftJoinAndSelect('members.client', 'client')
             .where('members.id = :memberId', { memberId })
             .getOne();
         if (!member) {
