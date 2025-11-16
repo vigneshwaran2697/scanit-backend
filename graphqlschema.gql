@@ -162,6 +162,8 @@ type Mutation {
   createClientSubscription(createClientSubscriptionInput: CreateClientSubscriptionInput!): ClientSubscription!
   createSuperAdmin(createSuperAdminInput: CreateSuperAdminInput!): User!
   createUser(createMemberInput: CreateMemberInput!): String!
+  resetPassword(newPassword: String!, token: String!): String!
+  sendForgotPasswordMail(emailId: String!): String!
   updateClient(updateClientInput: UpdateClientInput!): String!
   updateClientProperties(colorCode: String, logoUrl: String): ClientPropertyResponse!
   updateSubscriptions(updateClientSubscriptionInput: UpdateClientSubscriptionInput!): String!
@@ -192,6 +194,7 @@ type Query {
   getUserById(memberId: String!): Members!
   s3FileDelete(bucketName: String!, key: String!): String!
   signIn(emailId: String!, password: String!): String
+  verifyResetPasswordToken(token: String!): String!
 }
 
 type S3Object {
@@ -247,6 +250,7 @@ type User {
   lastName: String
   order: Float
   phoneNumber: String
+  resetPwdToken: String
   updatedAt: DateTime
   userRole: String
   username: String!

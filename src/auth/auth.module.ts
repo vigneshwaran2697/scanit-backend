@@ -6,8 +6,6 @@ import { AuthConfiguration } from './auth.configuration';
 import { CognitoAuthGuard } from './guards/cognito.guard';
 import { JwtStrategy } from './jwt.strategy';
 import { SsmModule } from '../aws/ssm/ssm.module';
-import { UserService } from '../modules/user/user.service';
-import { UserRepository } from '../modules/user/user.repository';
 
 @Module({
   imports: [
@@ -16,6 +14,6 @@ import { UserRepository } from '../modules/user/user.repository';
     UserModule,
     SsmModule,
   ],
-  providers: [AuthConfiguration, CognitoAuthGuard, JwtStrategy, UserService, UserRepository],
+  providers: [AuthConfiguration, CognitoAuthGuard, JwtStrategy],
 })
 export class AuthModule {}

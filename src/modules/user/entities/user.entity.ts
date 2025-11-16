@@ -97,4 +97,8 @@ export class User {
     type: AppConstants.TIME_WITH_ZONE_TYPE,
   })
   public deletedAt?: Date;
+
+  @Field({ nullable: true })
+  @Column({ nullable: true, name: 'u_reset_pwd_token' })
+  resetPwdToken?: string;
 }

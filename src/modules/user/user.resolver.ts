@@ -1,7 +1,6 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { UserService } from './user.service';
 import { User } from './entities/user.entity';
-import { CreateSuperAdminInput } from './dto/create-user.input';
 
 @Resolver(() => User)
 export class UserResolver {
@@ -13,5 +12,23 @@ export class UserResolver {
     @Args('password') password: string,
   ): Promise<string> {
     return this.userService.singIn(emailId, password);
+  }
+
+  @Mutation(() => String)
+  async sendForgotPasswordMail(@Args('emailId') emailId: string): Promise<string> {
+    return this.userService.sendForgotPasswordMail(emailId);
+  }
+
+  @Query(() => String)
+  async verifyResetPasswordToken(@Args('token') token: string): Promise<string> {
+    return this.userService.verifyResetPasswordToken(token);
+  }
+
+  @Mutation(() => String)
+  async resetPassword(
+    @Args('token') token: string,
+    @Args('newPassword') newPassword: string,
+  ): Promise<string> {
+    return this.userService.resetPassword(token, newPassword);
   }
 }

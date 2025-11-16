@@ -12,7 +12,6 @@ import { AuthModule } from './auth/auth.module';
 import { GraphQLModule } from '@nestjs/graphql';
 import { GraphQLDate } from 'graphql-scalars';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
-import { UserService } from './modules/user/user.service';
 import { SuperAdminModule } from './modules/super-admin/super-admin.module';
 import { ClientModule } from './modules/client/client.module';
 import * as cors from 'cors';
@@ -47,7 +46,7 @@ import { SesModule } from './aws/ses/ses.module';
     ClientModule,
   ],
   controllers: [AppController],
-  providers: [AppService, UserService],
+  providers: [AppService],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

@@ -7,6 +7,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { JwtModule } from '@nestjs/jwt';
 import { jwtConstants } from '../../utils/jwt-constants';
 import { UserRepository } from './user.repository';
+import { SesModule } from 'src/aws/ses/ses.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { UserRepository } from './user.repository';
       signOptions: { expiresIn: jwtConstants.expiry },
     }),
     CognitoModule,
+    SesModule,
   ],
   providers: [UserResolver, UserService, UserRepository],
   exports: [UserService, TypeOrmModule.forFeature([User]), UserRepository],

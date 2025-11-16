@@ -1,12 +1,14 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { config as configData } from '../../config/config';
 import { User, UserRole } from './entities/user.entity';
 import { CognitoService } from '../../aws/cognito/cognito.service';
 import { UserRepository } from './user.repository';
 import { UnauthenticatedException } from '../../utils/exceptions/unauthenticated.exception';
+import { JwtService } from '@nestjs/jwt';
+import { forgotPassordUrlConfig } from '../../config/config';
 const config = configData[process.env.NODE_ENV || 'development'];
-import { Resend } from 'resend';
-import { AES, enc } from 'crypto-js';
+import { SesService } from 'src/aws/ses/ses.service';
+
 
 // SuperAdmin user
 const SUPERADMIN_FIRST_NAME = 'ScanIt';
@@ -17,6 +19,8 @@ export class UserService {
   constructor(
     private readonly cognitoService: CognitoService,
     private readonly userRepo: UserRepository,
+    private readonly jwtService: JwtService,
+    private readonly mailService: SesService
   ) {}
 
   public async createSuperAdminUser() {
@@ -97,27 +101,63 @@ export class UserService {
     return this.cognitoService.performAuth(emailId, password);
   }
 
-  public async sendEmail() {
-    const resend = new Resend('re_35v4kocS_HBM7zyUh2GqAjYJn2Y7eh5ot');
+  /* -------------------- Forgot Password Flow -------------------- */
+  public async sendForgotPasswordMail(emailId: string): Promise<string> {
+    emailId = emailId.toLowerCase();
+    const user = await this.getUserByEmailId(emailId);
+    if (user && !user.isActive) {
+      throw new UnauthenticatedException('User account is not active.');
+    }
+    const payload = { emailId: user.emailId, id: user.id };
+    const token = this.jwtService.sign(payload);
+    await this.userRepo.updateByObj(user, { resetPwdToken: token });
 
-    // Encryption
-    let encryptedData = AES.encrypt('this is message', 'gDdoxYdfT5XCJw0y');
-    // encodeURIComponent(encryptedData.toString());
+    // Build reset link using optional APP_DOMAIN env (frontend can handle token if domain absent)
+    const appDomain = process.env.APP_DOMAIN || '';
+    const resetLink = `${appDomain}${forgotPassordUrlConfig}${token}`;
 
-    // Decryption
-    let decryptedData = AES.decrypt(encryptedData, 'gDdoxYdfT5XCJw0y');
-    console.log(decryptedData.toString(enc.Utf8));
-
-      const { data, error } = await resend.emails.send({
-        from: 'scanit <noreply@scanit.com>',
-        to: ['vicky.ravi26@gmail.com'],
-        subject: 'Test Email',
-        html: '<strong>It works!</strong>',
-      });
-      if (error) {
-        throw new Error(JSON.stringify(error));
-      }
-      console.log({ data });
-      return JSON.stringify(data);
+    try {
+      await this.mailService.sendEmail(
+        user.emailId,
+        'Reset your password',
+        `Hello ${user.firstName || ''},\n\nYou requested a password reset. Click the link below (or paste into browser):\n\n${resetLink}\n\nIf you did not request this, you can safely ignore this email.`
+      );
+    } catch (e) {
+      console.log('Forgot password email error', e);
+      throw new InternalServerErrorException('Error sending reset password email');
+    }
+    return 'Email Sent Successfully!';
   }
+
+  public async verifyResetPasswordToken(token: string, resetPwdToken = false): Promise<string> {
+    try {
+      const payload: any = this.jwtService.verify(token);
+      if (payload && payload.emailId) {
+        const user = await this.getUserByEmailId(payload.emailId);
+        if (user.resetPwdToken === token) {
+          if (resetPwdToken) {
+            await this.userRepo.updateByObj(user, { resetPwdToken: null });
+            return user.emailId;
+          }
+          return 'Verified Successfully';
+        }
+      }
+      throw new BadRequestException('Reset Password link is invalid or expired');
+    } catch (e) {
+      throw new BadRequestException('Reset Password link is invalid or expired');
+    }
+  }
+
+  public async resetPassword(token: string, newPassword: string): Promise<string> {
+    const emailId = await this.verifyResetPasswordToken(token, true);
+    const user = await this.getUserByEmailId(emailId);
+    try {
+      await this.cognitoService.cognitoSetPassword(user.username, newPassword);
+    } catch (e) {
+      console.log('Cognito password reset error', e);
+      throw new InternalServerErrorException('Unable to reset password');
+    }
+    return 'Password Reset Successfully';
+  }
+
 }
